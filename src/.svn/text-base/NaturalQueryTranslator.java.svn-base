@@ -1,0 +1,68 @@
+package de.dfki.isreal.semantics;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import com.sun.org.apache.xerces.internal.parsers.SAXParser;
+
+public class NaturalQueryTranslator {
+
+  HashMap<String,String> map = null; // new HashMap<String,String>();
+	
+	public static void main(String[] args) {
+			
+			NaturalQueryTranslator nQT=new NaturalQueryTranslator("qpairs.xml");
+			//NaturalQueryTranslator nQT=new NaturalQueryTranslator();
+			//nQT.addQuery("What is name of the blue pill?","SELECT ?name WHERE { ?name hasColor "+"blue"+" . }");
+			System.out.println("Sparql Query: "+nQT.getSPARQLQuery("What is name of the blue pill?"));
+
+	} 
+		
+	public NaturalQueryTranslator()
+	{
+		 map = new HashMap<String,String>();
+	}
+	public NaturalQueryTranslator(String filename)
+	{
+		 map = new HashMap<String,String>();
+		 HashMap<String, String> temp=new HashMap<String,String>(); 
+		 ParsePairsXml t = new ParsePairsXml();
+		    SAXParser p = new SAXParser();
+		   
+		   p.setContentHandler(t);
+		    try {
+	      	  p.parse(filename); 
+	      	  temp=t.returnMap();
+	      	  
+	      	  for (Iterator i = temp.keySet().iterator(); i.hasNext();) 
+			   {
+	      	
+				String key = (String)i.next();
+				//System.out.println("key"+key+temp.get(key));
+				map.put(key, temp.get(key));	
+			   }
+		    } 
+		    catch (Exception e) { e.printStackTrace(); }		 
+	}
+	
+	public void addQuery(String nl, String sparql) {
+		
+		map.put(nl,sparql);
+	}
+	
+	public String getSPARQLQuery(String nl) {
+		
+		String query="Natural Language not found";
+		
+		for (Iterator i = map.keySet().iterator(); i.hasNext();) 
+		{
+			String key = (String)i.next();  //System.out.println("q"+key.length()+nl.length());
+			if (key.trim().equals(nl)) 
+			{
+			query=map.get(key);
+			}
+		}
+			return query;	
+	}
+	
+	
+}

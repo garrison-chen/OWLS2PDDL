@@ -1,0 +1,122 @@
+package de.dfki.isreal.semantics;
+
+import java.io.FileNotFoundException;
+import java.net.URI;
+import java.net.URISyntaxException;
+//import org.mindswap.owls.vocabulary ;
+
+import org.mindswap.owls.service.Service;
+import java.net.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+//import org.mindswap.owls.io.*;
+import org.mindswap.owls.*;
+import org.mindswap.owls.generic.expression.Expression;
+import org.mindswap.owls.process.*;
+
+
+import org.mindswap.owl.OWLFactory;
+import org.mindswap.owl.OWLIndividual;
+import org.mindswap.owl.OWLIndividualList;
+import org.mindswap.owl.OWLKnowledgeBase;
+import org.mindswap.owl.OWLObject;
+import org.mindswap.owl.OWLOntology;
+import org.mindswap.owls.process.Condition;
+import org.mindswap.owls.process.ConditionList;
+import org.mindswap.owls.process.Process;
+import org.mindswap.owls.profile.Profile;
+//import org.mindswap.owls.profile.Profile;
+import org.mindswap.owls.service.Service;
+import org.mindswap.swrl.AtomList;
+import org.semanticweb.owl.apibinding.OWLManager;
+import org.semanticweb.owl.model.OWLException;
+import org.semanticweb.owl.model.OWLObjectProperty;
+import org.semanticweb.owl.model.OWLOntologyManager;
+import org.semanticweb.owl.model.OWLProperty;
+
+//import EDU.cmu.Atlas.owls1_1.profile;
+
+
+public class Test_xmlpar {
+	
+	public static void main(String[] args) {
+		
+		
+			URI aURI = null;
+			try {
+				aURI = new URI("http://127.0.0.1/isreal/flip_slider.owl");
+				//aURI = new URI("http://www.mindswap.org/2004/owl-s/1.1/BookFinder.owl");
+				//aURI = new URI("http://www.mindswap.org/2004/owl-s/1.1/Dictionary.owl");
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			OWLKnowledgeBase aKB = OWLFactory.createKB();
+		    try {
+		    	 aKB.setReasoner("RDFS");
+				Service service= aKB.readService(aURI);
+				System.out.println("service name: "+service.getLocalName());
+				
+				/*		
+				Profile profile=service.getProfile();	
+				ConditionList conditionList=profile.getConditions();
+				
+				System.out.println(conditionList.size() + " preconditions: ");
+
+				Iterator conditionListIt = conditionList.iterator();
+
+				while(conditionListIt.hasNext()){
+					Condition condition = (Condition)conditionListIt.next();
+					System.out.println(condition.getURI().toString() + " ");
+				} 
+				
+				Process process=service.getProcess();	
+				ConditionList conditionList=process.getConditions();
+				
+				System.out.println(conditionList.size() + " preconditions: ");
+
+				Iterator conditionListIt = conditionList.iterator();
+
+				while(conditionListIt.hasNext()){
+					Condition condition = (Condition)conditionListIt.next();
+					System.out.println(condition.getURI().toString() + " ");
+				}
+				ResultList effectList = process.getResults();
+
+				System.out.println(effectList.size() + " effects: ");
+
+
+				Iterator effectListIt = effectList.iterator();
+
+				while(effectListIt.hasNext()){
+					Result effect = (Result)effectListIt.next();
+					System.out.println(effect.getURI().toString() + " "+effect.getEffect().getBody().atomAt(0).toString());
+				}*/
+				
+				Process process=service.getProcess(); 
+				System.out.println("process name: "+process.getLocalName());
+			
+				
+				ConditionList cond= process.getConditions();
+				System.out.println("size: "+cond.size());
+				//System.out.println("conditions: "+cond); 
+				OWLIndividual olr=(OWLIndividual) cond.conditionAt(0); 
+				
+				
+			
+				//System.out.println("process rdf: "+process.toRDF()); 
+					
+				
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        
+       
+			
+	 
+	}
+
+}

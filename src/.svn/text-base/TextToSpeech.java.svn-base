@@ -1,0 +1,131 @@
+package de.dfki.isreal.semantics;
+/*
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.UnknownHostException;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import de.dfki.lt.signalproc.util.AudioPlayer;
+import de.dfki.lt.mary.client.MaryClient;
+*/
+
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.Locale;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import marytts.util.data.audio.AudioPlayer;
+import marytts.client.MaryClient;
+import marytts.client.http.Address;
+
+public class TextToSpeech {	
+	
+      /*
+      static String inputType = null; 
+      static String outputType = null; 
+      static String audioType = null; 
+      static String defaultVoiceName = null; 
+      static String serverHost = null; 
+	  static int serverPort;  */
+	
+	  static String inputType = null; 
+      static String outputType = null; 
+      static String locale = null;       
+      static String audioType = null; 
+      static String defaultVoiceName = null; 
+      static String serverHost = null; 
+	  static int serverPort;
+      
+	   public TextToSpeech()
+	   {		 
+	    /* 
+	     inputType = "TEXT_EN";
+	     outputType = "AUDIO";
+	     audioType = "WAVE";
+	     defaultVoiceName = "hmm-slt";
+	     serverHost = System.getProperty("server.host", "localhost");
+	     //serverHost = System.getProperty("server.host", "cling.dfki.uni-sb.de"); 
+	     //serverHost = System.getProperty("server.host", "http://marry.dfki.de"); 
+		 serverPort = Integer.getInteger("server.port", 59125).intValue(); */
+		   
+		 inputType = "TEXT";
+		 outputType = "AUDIO";
+		 locale = "de"; // or US English (en-US), Telugu (te), Turkish (tr), ...
+		 audioType = "WAVE";
+		 // defaultVoiceName = "hmm-slt";
+		 defaultVoiceName = null;
+		    
+		 //serverHost = System.getProperty("server.host", "cling.dfki.uni-sb.de"); 
+		 serverHost = System.getProperty("server.host", "localhost");
+		 serverPort = Integer.getInteger("server.port", 59125).intValue();
+	   }
+	   
+	   public static void speak(String text)    throws IOException, UnknownHostException, UnsupportedAudioFileException,
+       InterruptedException
+	   {
+		   MaryClient mary = MaryClient.getMaryClient(new Address(serverHost, serverPort));
+		   ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	        mary.process(text, inputType, outputType, locale, audioType, defaultVoiceName, baos);
+	        // The byte array constitutes a full wave file, including the headers.
+	        // And now, play the audio data:
+	        AudioInputStream ais = AudioSystem.getAudioInputStream(
+	            new ByteArrayInputStream(baos.toByteArray()));
+	        LineListener lineListener = new LineListener() {
+	            public void update(LineEvent event) {
+	                if (event.getType() == LineEvent.Type.START) {
+	                    System.err.println("Audio started playing.");
+	                } else if (event.getType() == LineEvent.Type.STOP) {
+	                    System.err.println("Audio stopped playing.");
+	                } else if (event.getType() == LineEvent.Type.OPEN) {
+	                    System.err.println("Audio line opened.");
+	                } else if (event.getType() == LineEvent.Type.CLOSE) {
+	                    System.err.println("Audio line closed.");
+	                }
+	            }
+	        };
+
+	        AudioPlayer ap = new AudioPlayer(ais, lineListener);
+	        ap.start();
+		  
+		   
+		   
+	    }
+	   
+	   public static void main(String[] args)
+	   {
+	   	TextToSpeech tts= new TextToSpeech();
+	   	try {
+			tts.speak("Hi sadia");
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedAudioFileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	   }
+	   
+	}
+
+
+

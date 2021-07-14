@@ -1,0 +1,71 @@
+package de.dfki.isreal.semantics;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
+
+public class ParsePairsXml extends DefaultHandler{
+	
+	ArrayList<String> nl_sparql=new ArrayList<String>();
+	HashMap<String, String> m= new HashMap<String,String>();
+	int nflag=0;
+	int sflag=0;
+	
+	public void startDocument() {
+	   // System.out.println("start document");
+	  }
+
+	  public void endDocument() {
+	    //System.out.println("end document");	    
+	  }
+	  public HashMap returnMap ()
+	  {
+		  return m;
+	  }
+	  public void startElement(String uri, String localName, String qName, Attributes attributes) {
+		  
+		 // System.out.println("startElement"+qName);
+		  if(qName.equals("natural")) 	 
+			  	nflag=1;
+		  else if(qName.equals("sparql")) 
+			  sflag=1;
+   
+		
+	  }
+
+	  public void endElement(String uri, String localName, String qName) {
+	  // System.out.println("end element: " + qName);
+		  if(qName.equals("natural")) 	 
+			  	nflag=0;
+		  else if(qName.equals("sparql")) 
+			  sflag=0;
+		  else if(qName.equals("querypair") && (nl_sparql.get(0).length()>1 && nl_sparql.get(1).length()>1))
+		  {
+			  m.put(nl_sparql.get(0), nl_sparql.get(1));
+		  }
+	  }
+
+	  public void ignorableWhitespace(char[] ch, int start, int length) {
+	   
+	    //System.out.println("whitespace, length " + length);
+	  }
+
+	  public void processingInstruction(String target, String data) {
+	   
+	  // System.out.println("processing instruction: " + data);
+	  }
+
+	  public void characters(char[] ch, int start, int length){
+		  
+		  String str=String.valueOf(ch, start, length);
+		//  System.out.println("chars: "+ str.length());
+		 if(nflag==1)
+			 nl_sparql.add(str);
+		 else if(sflag==1)
+			 nl_sparql.add(str);
+		
+	  }
+
+}

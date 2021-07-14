@@ -1,0 +1,239 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer
+END
+PDDXMLObjects.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/PDDXMLObjects.java
+END
+RVisitorBase.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/RVisitorBase.java
+END
+Parameters.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Parameters.java
+END
+ICardinalityChoice.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/ICardinalityChoice.java
+END
+PDDXMLObject.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/PDDXMLObject.java
+END
+Max.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Max.java
+END
+UJAXP.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/UJAXP.java
+END
+Disjunction.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Disjunction.java
+END
+IExpressionChoice.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/IExpressionChoice.java
+END
+Equals.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Equals.java
+END
+Actions.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Actions.java
+END
+Exists.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Exists.java
+END
+IRVisitable.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/IRVisitable.java
+END
+Predicates.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Predicates.java
+END
+Types.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Types.java
+END
+ForAll.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/ForAll.java
+END
+Precondition.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Precondition.java
+END
+Predicate.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Predicate.java
+END
+Variables.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Variables.java
+END
+Conjunction.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Conjunction.java
+END
+URVisitor.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/URVisitor.java
+END
+Requirements.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Requirements.java
+END
+CardinalitySequence.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/CardinalitySequence.java
+END
+Cardinality.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Cardinality.java
+END
+IRNode.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/IRNode.java
+END
+Parameter.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Parameter.java
+END
+URelaxer.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/URelaxer.java
+END
+Conditional.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Conditional.java
+END
+IRVisitor.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/IRVisitor.java
+END
+Negation.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Negation.java
+END
+Domain.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Domain.java
+END
+InitState.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/InitState.java
+END
+Problem.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Problem.java
+END
+GoalState.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/GoalState.java
+END
+Variable.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Variable.java
+END
+Type.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Type.java
+END
+Action.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Action.java
+END
+RStack.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/RStack.java
+END
+Effect.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/pddxml/relaxer/Effect.java
+END

@@ -1,0 +1,634 @@
+package de.dfki.isreal.semantics;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.TransferHandler;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+
+public class SendSPARQLQueryTab2 extends JPanel{
+	
+		static JTextArea queryTextArea=null;
+		static JList vocabList=null;
+	    static JTextArea resultTextArea=null;
+	    static JButton sendButton=null;
+	 
+	    
+	    static JRadioButton selectButton=null;
+	    static JRadioButton askButton=null;
+	    static JRadioButton constructButton=null; 
+	    static JRadioButton describeButton=null; 
+	    
+	    static JTextField noOfVarsTextField=null;
+	    static int totalVars=0;
+	    static JButton addButton=null;
+	 
+	    static JComboBox subjectComboBox=null;
+	    static JComboBox predicateComboBox=null;
+	    static JComboBox objectComboBox=null;
+	    static String[] varsList=  new String[10];//{" "," "," "};//{"","var1", "var2", "var3"    };
+	    
+	    static JTable inputsTable=null;
+	    static JButton deleteButton=null;
+	    
+	    static JButton clearButton=null;
+	    static JButton createButton=null;
+	    static String[] triple=new String[10];//{"var1","var1","var1"};
+	   static DefaultTableModel tModel=null;
+	   
+	   
+	   static String queryText=new String();
+	   //static String vars="vars";
+	   //static String triples="triple";
+	   
+	    public SendSPARQLQueryTab2() {
+	    	
+	    	  
+	    this.setLayout(new GridBagLayout());    // creates a constraints object
+	    
+
+	    JPanel tmpO = new JPanel();
+        tmpO.setLayout(new GridBagLayout()); 
+	    addItem(tmpO, new JLabel("1.Select Query Options"), 0, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 0.0, 0.0,1);
+	    addItem(tmpO, new JLabel("2.Choose Number of Variables"), 0, 1, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE, 0.0, 0.0,1);
+	    addItem(tmpO, new JLabel("3.Fill triples <s, p, o>"), 0, 2, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE, 0.0, 0.0,1);
+	    addItem(tmpO, new JLabel("4.Add Triples to the table"), 0, 3, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE, 0.0, 0.0,1);
+	    addItem(tmpO, new JLabel("-Delete selected table row"), 0, 4, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE, 0.0, 0.0,1);
+	    addItem(tmpO, new JLabel("-Clear all rows"), 0, 5, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE, 0.0, 0.0,1);
+	  	addItem(tmpO, new JLabel("5.Create query"), 0, 6, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 0.0, 0.0,1);
+	  	addItem(tmpO, new JLabel("6.Send query for processing"), 0, 7, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE, 0.0, 0.0,1);
+	   	addItem(this, tmpO, 0, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.BOTH, 0.5, 0.5,2);
+	    
+	  	JPanel tmpH = new JPanel();
+        tmpH.setLayout(new BorderLayout());        
+        JScrollPane hScrollPane = new JScrollPane(tmpO);
+	    tmpH.setPreferredSize(new Dimension(190, 40)); 
+	    hScrollPane.setBorder(BorderFactory.createTitledBorder("Hints For Use"));
+	    tmpH.add(hScrollPane, BorderLayout.CENTER);  
+	    addItem(this, tmpH, 0, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.BOTH, 0.5, 0.5,5);
+	    
+	    // Create and group buttons
+	    ButtonGroup qTaskGroup = new ButtonGroup();
+	    qTaskGroup.add(getSelectButton());
+        qTaskGroup.add(getAskButton());
+        qTaskGroup.add(getConstrButton());
+        qTaskGroup.add(getDescButton()); 
+        
+        
+        Box taskBox = Box.createVerticalBox();
+        taskBox.add(getSelectButton());
+        taskBox.add(getAskButton());
+        taskBox.add(getConstrButton());
+        taskBox.add(getDescButton());
+
+  
+        taskBox.setBorder(BorderFactory.createTitledBorder("1. Query Options"));
+        addItem(this, taskBox, 1, 0, 1, 1, GridBagConstraints.CENTER,GridBagConstraints.BOTH, 0.5, 0.5,5);
+        
+       // addItem(this, getSubjectComboBox(), 0, 1, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE, 0.0, 0.0);
+        
+        JPanel tmpTF=new JPanel();
+        tmpTF.setLayout(new GridBagLayout()); 
+        tmpTF.setBorder(BorderFactory.createTitledBorder("3. Triple Form"));
+        addItem(tmpTF, new JLabel("2. No. of Variables:"), 0, 1, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE, 0.0, 0.0,5);
+        addItem(tmpTF, getNoOfVarsTextField(), 1, 1, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 1.0, 0.0,5);
+        addItem(tmpTF, new JLabel("Subject(s)"), 0, 2, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 0.5, 0.0,5);
+        addItem(tmpTF, new JLabel("Predicate(p)"), 1, 2, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 0.5, 0.0,5);
+        addItem(tmpTF, new JLabel("Object(o)"), 2, 2, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 0.5, 0.0,5);
+    	   
+        addItem(tmpTF, getSubjectComboBox(), 0, 3, 1, 1, GridBagConstraints.WEST,GridBagConstraints.BOTH, 0.5, 0.0,5);
+	    addItem(tmpTF, getPredicateComboBox(), 1, 3, 1, 1, GridBagConstraints.WEST,GridBagConstraints.BOTH, 0.5, 0.0,5);
+	    addItem(tmpTF, getObjectComboBox(), 2, 3, 1, 1, GridBagConstraints.WEST,GridBagConstraints.BOTH, 0.5, 0.0,5);
+	    addItem(tmpTF, getAddButton(), 2, 4, 1, 1, GridBagConstraints.EAST,GridBagConstraints.NONE, 0.0, 0.0,5);
+         
+        addItem(this, tmpTF, 0, 1, 1, 1, GridBagConstraints.WEST,GridBagConstraints.BOTH, 0.5, 0.5,5);
+    	  
+        
+        JPanel tmpV = new JPanel();
+        tmpV.setLayout(new BorderLayout());        
+        JScrollPane vScrollPane = new JScrollPane(getVocabList());
+	    tmpV.setPreferredSize(new Dimension(190, 40)); 
+	    vScrollPane.setBorder(BorderFactory.createTitledBorder("Vocabulary List"));
+	    tmpV.add(vScrollPane, BorderLayout.CENTER);      
+	    addItem(this, tmpV, 1,1,1,1, GridBagConstraints.NORTH, GridBagConstraints.BOTH, 0.5, 0.5,5);	
+	    
+	      JPanel tmpI = new JPanel();
+	      tmpI.setLayout(new GridBagLayout()); 
+	      tmpI.setBorder(BorderFactory.createTitledBorder("Inputs"));
+	      JPanel tmpT =new JPanel();
+	      tmpT.setLayout(new BorderLayout());        
+	      JScrollPane tScrollPane = new JScrollPane(getInputsTable());
+	      tmpT.setPreferredSize(new Dimension(390, 90)); 
+	      tmpT.add(tScrollPane, BorderLayout.CENTER); 
+	      addItem(tmpI, tmpT, 0, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.BOTH, 0.5, 0.0,5);
+		  addItem(tmpI, getDeleteButton(), 0, 1, 1, 1, GridBagConstraints.EAST,GridBagConstraints.NONE, 0.0, 0.0,5);
+	       
+	      addItem(this, tmpI, 0,2, 1, 1, GridBagConstraints.NORTH,GridBagConstraints.BOTH,0.5,0.5,5 );
+	     
+	     JPanel tmpB = new JPanel();
+	     tmpB.setLayout(new GridBagLayout()); 
+	     addItem(tmpB, getClearButton(), 0,0, 1, 1, GridBagConstraints.CENTER,GridBagConstraints.NONE,0.0,0.0,5 );
+	     addItem(tmpB, getCreateButton(), 0,1, 1, 1, GridBagConstraints.CENTER,GridBagConstraints.NONE,0.0,0.0,5 );
+	     addItem(this, tmpB, 1,2, 1, 1, GridBagConstraints.NORTH,GridBagConstraints.BOTH,0.5,0.5,5 );
+
+	    JPanel tmpQ = new JPanel();
+        tmpQ.setLayout(new BorderLayout()); 
+        tmpQ.setBorder(BorderFactory.createTitledBorder("Query"));
+        tmpQ.add(getQueryTextArea());
+        addItem(this, tmpQ, 0,3, 1, 1, GridBagConstraints.NORTH,GridBagConstraints.BOTH,0.5 ,0.5,5);
+     
+	    JPanel tmpR = new JPanel();
+        tmpR.setLayout(new BorderLayout()); 
+        tmpR.setBorder(BorderFactory.createTitledBorder("Result"));
+        tmpR.add(getResultTextArea());
+
+        addItem(this, tmpR, 1,3, 1, 1, GridBagConstraints.WEST,GridBagConstraints.BOTH, 0.5, 0.5,5);  	  
+	    addItem(this, getSendButton(), 0, 4, 2, 1, GridBagConstraints.CENTER,GridBagConstraints.NONE, 0.0,0.0,5);
+	   	  
+	    
+	
+	    }
+	    
+	    private void addItem(JPanel p, JComponent c, int x, int y, int width, int height, int align, int fill, double weightx, double weighty, int inset) {
+	        GridBagConstraints gc = new GridBagConstraints();
+	        gc.gridx = x;
+	        gc.gridy = y;
+	        gc.gridwidth = width;
+	        gc.gridheight = height;
+	        gc.weightx = weightx;
+	        gc.weighty = weighty;
+	        gc.insets = new Insets(inset, inset, inset, inset);
+	        gc.anchor = align;
+	        gc.fill = fill;
+	        p.add(c, gc);
+	      }
+	  	
+	     private static JButton getSendButton(){
+	    	 if (sendButton==null)
+	    		 sendButton=new JButton("6.Send");
+	  		   return sendButton;
+	  	   }
+	         
+	   private static JList getVocabList(){
+		   	  
+	    	 vocabList = new JList(new String[] { "uridfdfdf1", "uri2","aaari3", "uri4", "uri2","uri3", "uri4" , "uri2","uri3", "uri4"});
+			 vocabList.setDragEnabled(true);			 
+			 return vocabList;
+		   } 
+	   
+	   private static JTextArea getResultTextArea(){
+		   if (resultTextArea==null)
+			   	resultTextArea=new javax.swing.JTextArea(10,25);
+			return resultTextArea;
+		   }
+	   
+	   private static JTextArea getQueryTextArea(){
+		   if (queryTextArea==null)
+		   			   	queryTextArea=new javax.swing.JTextArea(10,25);
+				   
+			return queryTextArea;
+		   }
+	   
+   
+	   
+	   private static JRadioButton getSelectButton(){
+		   if (selectButton==null){
+			   selectButton= new JRadioButton("SELECT"); 
+			 selectButton.addActionListener(new java.awt.event.ActionListener() {
+		   			public void actionPerformed(java.awt.event.ActionEvent evt) {
+		   			   	 		System.out.println("SELECT selectd: "); 	
+		   			   	 		getQueryTextArea().setText(createQuery());
+		   			   	 		
+		   			  }				
+		   			}
+															);
+			   }		       
+		   
+	    //	  selectButton.setSelected(true);
+			   return selectButton;
+		   }
+	   
+	   private static JRadioButton getAskButton(){
+		   if (askButton==null)
+		   {
+			   askButton= new JRadioButton("ASK"); 
+			   askButton.addActionListener(new java.awt.event.ActionListener() {
+		   			public void actionPerformed(java.awt.event.ActionEvent evt) {
+		   			   	 		System.out.println("ASK selectd: "); 	
+		   			   	 		getQueryTextArea().setText(createQuery());		   			   	 		
+		   			  }				
+		   			}
+															);			   
+		   }
+	   	 return askButton;
+		   }
+	   
+	   private static JRadioButton getConstrButton(){
+		   if (constructButton==null){
+	    	constructButton= new JRadioButton("CONSTRUCT"); 	
+	    	constructButton.setEnabled(false);
+		   }
+	       return constructButton;
+		   }
+	   
+	   private static JRadioButton getDescButton(){
+		   if (describeButton==null)
+		   {
+	    	describeButton= new JRadioButton("DESCRIBE"); 	
+	    	describeButton.setEnabled(false);
+		   }
+	    	 return describeButton;
+		   }
+	   private static JButton getAddButton()
+	   { 
+		   if (addButton==null)
+	   
+		   {
+		   addButton= new JButton("4.Add");
+		   addButton.addActionListener(new java.awt.event.ActionListener() {
+	   			public void actionPerformed(java.awt.event.ActionEvent evt) {
+	   			   	 		
+	   			   	 if(triple[0]==null && triple[1]==null && triple[2]==null)
+	   			   	        System.out.println("Triple: "+ triple[0]+triple[1]+triple[2]);
+	   			   	 else
+	   			   	 		getTableModel().addRow(triple);	   	 			
+	   		 				//System.out.println("count again"+ getTableModel().getRowCount());
+	   			   	 	
+	   		 			}							}
+			
+										);
+		   }
+		   return addButton;
+	   }
+	   
+	 static String createQuery()
+	 {		
+		   String queryText="";
+		   
+	   if(getSelectButton().isSelected()) 
+		{
+		   queryText="SELECT ";
+		   if(totalVars==0) 
+			   queryText=queryText.concat("< vars >");
+		   else
+		   { 	
+			  int i=0;System.out.println("len"+totalVars);
+			   while(i<totalVars)
+					{
+					 queryText=queryText.concat("?"+varsList[i]+" ");
+					 i++;
+					}  
+		   }
+		   queryText=queryText.concat("\n WHERE  {\n");
+		
+		   if(getTableModel().getRowCount()==0)
+			   queryText=queryText.concat("< triples > \n");
+		   else
+			   queryText=getTriples(queryText);			
+
+		   queryText=queryText.concat(" }");
+		}
+	   
+	   else if(getAskButton().isSelected()) 
+		{
+		   queryText="ASK { \n";
+		   
+		   if(getTableModel().getRowCount()==0)
+			   queryText=queryText.concat("< triples > \n");
+		   else
+		 	   queryText=getTriples(queryText);
+		   
+		   queryText=queryText.concat(" }");		   
+		}	   
+	   
+		return queryText;		   
+	   }
+	   
+	 private static String getTriples(String queryText)
+	   {
+		   int i=0;
+		   while(i<getTableModel().getRowCount())
+				{
+			      if(getTableModel().getValueAt(i, 0).toString().startsWith("var"))
+					queryText=queryText.concat(" ?"+getTableModel().getValueAt(i, 0).toString());
+			      else{
+			    	  try {
+						URI uri=new URI(getTableModel().getValueAt(i, 0).toString());	
+						//System.out.println("ab check kr"+uri.isAbsolute());
+						
+						if(uri.isAbsolute())
+						queryText=queryText.concat(" <"+uri+">");
+						else
+						queryText=queryText.concat(" \""+getTableModel().getValueAt(i, 0).toString()+"\"");
+					} catch (URISyntaxException e) {
+						e.printStackTrace();
+					}
+			    	 
+			      }
+			      if(getTableModel().getValueAt(i, 1).toString().startsWith("var"))
+					queryText=queryText.concat(" ?"+getTableModel().getValueAt(i, 1).toString());
+			      else{
+			    	  try {
+					 URI uri=new URI(getTableModel().getValueAt(i, 1).toString());
+			    	 if(uri.isAbsolute())
+					 queryText=queryText.concat(" <"+uri+">");
+			    	 else
+			    		 queryText=queryText.concat(" \""+getTableModel().getValueAt(i, 1).toString()+"\"");
+			    	  } 
+			    	catch (URISyntaxException e) {
+			    		e.printStackTrace();
+					}
+			      }
+			      if(getTableModel().getValueAt(i, 2).toString().startsWith("var"))
+					queryText=queryText.concat(" ?"+getTableModel().getValueAt(i, 2).toString()+". \n");
+			      else
+			      {
+			    	  try {
+					  URI uri=new URI(getTableModel().getValueAt(i, 2).toString());
+					  if(uri.isAbsolute())
+						  queryText=queryText.concat(" <"+uri+">. \n");
+					  else
+						  queryText=queryText.concat(" \""+getTableModel().getValueAt(i, 2).toString()+"\"\n");							
+			    	  } 
+				    	catch (URISyntaxException e) {
+				    		e.printStackTrace();
+						}
+			      }
+
+		    	  i++;
+			}  
+		 return queryText;
+	   
+	   }
+	 
+	   private static JButton getDeleteButton()
+	   {
+		   if (deleteButton==null)
+		   {
+		   deleteButton= new JButton("Delete");
+		   deleteButton.addActionListener(new ActionListener() {
+
+			      public void actionPerformed(ActionEvent event) {
+			        getTableModel().removeRow(getInputsTable().getSelectedRow());
+			        System.out.println("Rows Count: "+getInputsTable().getRowCount());
+			      }
+		   });
+		   }
+		   return deleteButton;
+	   }
+	   
+	   private static JButton getClearButton()
+	   {
+		   if (clearButton==null)
+		   {
+		   clearButton= new JButton("Clear ");
+		   clearButton.addActionListener(new ActionListener() {
+
+			      public void actionPerformed(ActionEvent evt) {
+			    	 int r=getInputsTable().getRowCount(); 
+			    	 System.out.println("Rows Count: "+getInputsTable().getRowCount());
+			    	 int ind=1;
+			         while(ind<=r){
+			            getTableModel().removeRow(0);
+			            ind++;
+			        }
+			         /*subjectComboBox.setSelectedItem(varsList[0]);
+			         predicateComboBox.setSelectedItem(varsList[0]);
+			         objectComboBox.setSelectedItem(varsList[0]);*/
+			         getSubjectComboBox().removeAllItems();
+			    	  getPredicateComboBox().removeAllItems();
+			    	  getObjectComboBox().removeAllItems();
+			    	  noOfVarsTextField.setText("0");
+			    	  //if (!getSelectButton().isSelected())
+			    	  //getQueryTextArea().setText(createQuery());
+			    	  totalVars=0;
+			      }
+		   });
+		   }
+		   return clearButton;
+	   }
+	   
+	   private static JButton getCreateButton()
+	   {
+		   if (createButton==null){
+			   createButton= new JButton("5. Create");
+			   createButton.addActionListener(new java.awt.event.ActionListener() {
+		   			public void actionPerformed(java.awt.event.ActionEvent evt) {
+			           getQueryTextArea().setText(createQuery()); 
+		   			}							}
+				
+				);
+		   }
+		   return createButton;
+	   }
+	   private static JComboBox getSubjectComboBox()
+	   {
+		   if (subjectComboBox==null)
+		   {
+		   subjectComboBox= new JComboBox(varsList);
+		   subjectComboBox.setEditable(true);
+		   	
+		   
+		   subjectComboBox.addActionListener(new java.awt.event.ActionListener() {
+	   			public void actionPerformed(java.awt.event.ActionEvent evt) {
+	   				
+   			     JComboBox cb = (JComboBox)evt.getSource();
+   			    
+	   			 triple[0]= (String)cb.getSelectedItem();
+	   	         	 		System.out.println("Subject: "+ triple[0]+"length"+triple.length);
+	   		 				
+	   			}							}
+			
+ 										);
+		   }
+		   return subjectComboBox;
+	   }
+	   private static JComboBox getPredicateComboBox()
+	   {
+		   if (predicateComboBox==null)
+		   {
+		   predicateComboBox= new JComboBox(varsList);
+		   predicateComboBox.setEditable(true);
+		   predicateComboBox.addActionListener(new java.awt.event.ActionListener() {
+	   			public void actionPerformed(java.awt.event.ActionEvent evt) {
+	   			  JComboBox cb = (JComboBox)evt.getSource();
+	   			 triple[1]= (String)cb.getSelectedItem();
+	   	         	 		System.out.println("Predicate: "+ triple[1]);
+	   		 				
+	   			    }							}
+			
+										);
+		   }
+		   return predicateComboBox;
+	   }
+	   private static JComboBox getObjectComboBox()
+	   {
+		   if (objectComboBox==null)
+		   {
+		   objectComboBox= new JComboBox(varsList);
+		   objectComboBox.setEditable(true);
+		   //objectComboBox.get
+		   objectComboBox.addActionListener(new java.awt.event.ActionListener() {
+	   			public void actionPerformed(java.awt.event.ActionEvent evt) {
+	   			  JComboBox cb = (JComboBox)evt.getSource();
+	   			  triple[2]= (String)cb.getSelectedItem();
+	   	         	 		System.out.println("Object: "+ triple[2]);
+	   		 				
+	   			}							}
+			
+										);
+		   }
+		   return objectComboBox;
+	   }
+	   
+	   private static JTable getInputsTable(){	    
+		   if (inputsTable==null)
+		   {
+	    	  inputsTable = new JTable();
+	    	  inputsTable.setModel(getTableModel());
+	    	 
+	    	// inputsTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		   }	
+			   return inputsTable;
+		   } 
+	    
+	    private static DefaultTableModel getTableModel(){	 
+	    	String[] columnNames = {"Subject(o)", "Predicate(p)","Object(o)"}; 
+	    	String[][] data ={};
+	    	 if (tModel==null)
+	    		 tModel = new DefaultTableModel(data,columnNames);
+	    	return tModel;
+		   } 
+	   
+	   private static JTextField getNoOfVarsTextField()
+	   {
+		   if (noOfVarsTextField==null)
+		   {
+		   noOfVarsTextField= new JTextField("0");
+		 
+		   KeyListener keyListener = new KeyListener() {
+			      public void keyPressed(KeyEvent keyEvent) {
+			       // printIt("Pressed", keyEvent);
+			      }
+			      public void keyReleased(KeyEvent keyEvent) {
+			     
+			    	  getSubjectComboBox().removeAllItems();
+			    	  getPredicateComboBox().removeAllItems();
+			    	  getObjectComboBox().removeAllItems();
+			    	  
+			    	  int ind=0; 
+			    		
+			    		System.out.println("Text"+Integer.parseInt(keyEvent.getKeyText(keyEvent.getKeyCode())));
+			    		
+		   				totalVars=Integer.parseInt(keyEvent.getKeyText(keyEvent.getKeyCode()));
+		   				//varsList=new String[10];
+		   					System.out.println("No of variables: "+totalVars);
+		   		
+		   					while(ind<Integer.parseInt(keyEvent.getKeyText(keyEvent.getKeyCode())))
+		   					{
+		   					varsList[ind]="var"+(ind+1);
+		   					System.out.println("list"+varsList[ind]+"lenmgth"+varsList.length);
+		   					
+		   					//getSubjectComboBox().removeItem(" ");
+		   					getSubjectComboBox().addItem(varsList[ind]);
+		   					
+		   					//getObjectComboBox().removeItem(" ");
+		   					getObjectComboBox().addItem(varsList[ind]);
+		   					
+		   					//getPredicateComboBox().removeItem(" ");
+		   					getPredicateComboBox().addItem(varsList[ind]);
+		   					
+		   					ind++;
+		   					 } 	
+		   					/*System.out.println("l "+varsList[0]+" lenmgth "+varsList[1]+" list "+varsList[2]);
+		   					System.out.println("ltem count "+getSubjectComboBox().getItemCount());
+		   					getSubjectComboBox().removeItem(" ");
+		   					System.out.println("ltem count "+getSubjectComboBox().getItemCount());*/
+   					
+		   												
+		   					getQueryTextArea().setText(createQuery()); 
+		   					
+			      }
+			      public void keyTyped(KeyEvent keyEvent) {
+			       // printIt("Typed", keyEvent);			    			        
+			      }
+			   
+			    };
+		   noOfVarsTextField.addKeyListener(keyListener);
+  										
+		   }
+		   return noOfVarsTextField;
+	   }
+	  
+
+	   
+	   
+	    static void setActionListerner(){
+
+	    	WindowListener wndCloser = new WindowAdapter() {
+	    		public void windowClosing(WindowEvent e) {
+	    			System.exit(0);
+	    		}
+	    	};
+	    	 
+    
+	    	sendButton.addActionListener(new java.awt.event.ActionListener() {
+	   			public void actionPerformed(java.awt.event.ActionEvent evt) {
+	   					System.out.println("Query Recieved: "+sendButton.getText());
+	   																		}
+																		}
+   										);
+	    	
+	    	
+	    	 
+	      }
+   
+   public static void main(String[] args) {
+
+	   JFrame f = new JFrame("Send SPARQL Query");
+	   f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	   JPanel p = new SendSPARQLQueryTab2();
+	   f.getContentPane().add(p);
+	  
+	   f.pack();
+	   //f.setSize(600, 200);
+	   f.setVisible(true);
+   
+   }
+   
+   
+   
+   
+}

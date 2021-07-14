@@ -1,0 +1,29 @@
+package de.dfki.isreal.semantics;
+
+public class Axiom {
+	String subject=null;
+	String property=null;
+	String object=null;
+	
+	Axiom(String sub, String prop,String obj)
+	{
+		subject=sub;
+		property=prop;
+		object=obj;
+	}
+	
+	String getSubject()
+	{
+		return subject;
+	}
+	
+	String getProperty()
+	{
+		return property;
+	}
+	String getObject()
+	{
+		return object;
+	}
+	
+}

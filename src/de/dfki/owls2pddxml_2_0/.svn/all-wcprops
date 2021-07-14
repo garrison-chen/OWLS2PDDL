@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0
+END
+OWLFactConverter.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/OWLFactConverter.java
+END
+ConverterContext.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/ConverterContext.java
+END
+PDDXMLCleaner.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/PDDXMLCleaner.java
+END
+PDDXMLPredicateSignatureGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/PDDXMLPredicateSignatureGenerator.java
+END
+OWLS2PDDXML.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/OWLS2PDDXML.java
+END
+OWLDescriptionConverter.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/OWLDescriptionConverter.java
+END
+OWLConditionalDescriptionConverter.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/OWLConditionalDescriptionConverter.java
+END
+PDDXMLExpressionTraverser.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/PDDXMLExpressionTraverser.java
+END
+StateHelper.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/StateHelper.java
+END
+OWLObjectConverter.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/OWLObjectConverter.java
+END
+OWLSServiceConverter.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/OWLSServiceConverter.java
+END
+PDDXMLExpressionCleaner.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/PDDXMLExpressionCleaner.java
+END
+OWLKnownFactConverter.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/OWLKnownFactConverter.java
+END
+OWLFactualDescriptionConverter.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/OWLFactualDescriptionConverter.java
+END
+DomainHelper.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/src/de/dfki/owls2pddxml_2_0/DomainHelper.java
+END

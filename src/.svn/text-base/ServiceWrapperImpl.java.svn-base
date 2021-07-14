@@ -1,0 +1,296 @@
+package de.dfki.isreal.semantics;
+
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import java.io.FileNotFoundException;
+import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+
+import org.mindswap.owl.OWLDataType;
+import org.mindswap.owl.OWLDataValue;
+import org.mindswap.owl.OWLDataValueList;
+import org.mindswap.owl.OWLFactory;
+import org.semanticweb.owl.model.OWLDataFactory;
+import org.mindswap.owl.OWLKnowledgeBase;
+import org.mindswap.owls.process.Condition;
+import org.mindswap.owls.process.ConditionList;
+import org.mindswap.owls.process.InputList;
+import org.mindswap.owls.process.OutputList;
+import org.mindswap.owls.process.Parameter;
+import org.mindswap.owls.process.ParameterList;
+import org.mindswap.owls.process.Process;
+import org.mindswap.owls.process.Result;
+import org.mindswap.owls.process.ResultList;
+import org.mindswap.owls.profile.Profile;
+import org.mindswap.owls.service.Service;
+import org.mindswap.pellet.datatypes.Datatype;
+import org.semanticweb.owl.apibinding.OWLManager;
+import org.semanticweb.owl.model.OWLConstant;
+import org.semanticweb.owl.model.OWLDataProperty;
+import org.semanticweb.owl.model.OWLDataPropertyExpression;
+import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owl.model.OWLObjectProperty;
+import org.semanticweb.owl.model.OWLObjectPropertyExpression;
+import org.semanticweb.owl.model.OWLOntology;
+import org.semanticweb.owl.model.OWLOntologyCreationException;
+import org.semanticweb.owl.model.OWLOntologyManager;
+import org.semanticweb.owl.model.OWLOntologyManager;
+import org.semanticweb.owl.model.OWLPropertyAxiom;
+
+import examples.OWLSValidator;
+
+public class ServiceWrapperImpl implements ServiceWrapper{
+	
+	static String uri=null;
+	static OWLOntology service_ont = null;
+	static Process process=null;
+	static OWLOntologyManager man = null;
+	static Service service = null;
+	static Profile profile=null;
+	
+	public ServiceWrapperImpl(String u) throws URISyntaxException{
+		
+		uri=u;
+		OWLKnowledgeBase aKB = OWLFactory.createKB();
+		aKB.setReasoner("RDFS");
+		
+		try {
+		
+			service = aKB.readService(new URI(uri));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//System.out.println("service name: " + service.getLocalName());
+		profile=service.getProfile();		
+		process = service.getProcess(); 
+		//System.out.println("process name: " + process.getLocalName());		
+
+		try {
+			man = OWLManager.createOWLOntologyManager();
+			service_ont = (OWLOntology) man.loadOntologyFromPhysicalURI(process.getURI());
+		} catch (OWLOntologyCreationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args) throws URISyntaxException  {	  		
+
+		ServiceWrapperImpl sri= new ServiceWrapperImpl("http://127.0.0.1/isreal/flip_slider.owl");
+		System.out.println("Validitiy:"+sri.isValid());
+		System.out.println("Desc:"+sri.getDescription());
+		System.out.println("Inputs:"+sri.getInputs());
+		System.out.println("Outputs:"+sri.getOutputs());
+		System.out.println("Locals:"+sri.getLocals());
+		System.out.println("Precond:"+sri.getPreconditionExpression());
+		System.out.println("Effects:"+sri.getEffects());		
+	} 
+		
+	public String getDescription() {		
+		return profile.getTextDescriptions().iterator().next().toString();
+	}
+
+	public List<List<String>> getEffects() {
+
+		List<List<String>> cond_effect_list=new ArrayList<List<String>>();
+		Set<OWLIndividual> allInds = service_ont.getReferencedIndividuals();
+		
+		Iterator<OWLIndividual> individualList = allInds.iterator();
+		
+		while (individualList.hasNext()) {
+		
+			OWLIndividual oi=null;
+			oi = individualList.next();
+					
+			if (oi.getURI().equals(process.getURI()) ) {	           	
+				
+				OWLDataFactory datafactory= man.getOWLDataFactory();								
+				try {
+					
+					Set<OWLIndividual> ois=null;
+					Set<OWLIndividual> oiResults=null;
+					OWLObjectProperty objRProperty=null;
+					OWLObjectProperty objEProperty=null;
+					OWLObjectProperty objCProperty=null;
+					Set<OWLConstant> oc=null;
+					OWLIndividual result=null;
+					OWLIndividual incond=null;
+					OWLIndividual effect=null;
+					
+					Map<OWLObjectPropertyExpression, Set<OWLIndividual>> opvR=oi.getObjectPropertyValues(service_ont);
+					objRProperty = datafactory.getOWLObjectProperty(new URI("http://www.daml.org/services/owl-s/1.1/Process.owl#hasResult"));
+					oiResults = opvR.get(objRProperty);
+					
+					for(OWLIndividual o:oiResults){
+						
+					List<String> condEffects= new ArrayList<String> ();
+					result=o;	//.iterator().next();
+					System.out.println("ObjectpropertyExpression Res: "+o);
+				
+					ois=null;
+					
+					
+					Map<OWLObjectPropertyExpression, Set<OWLIndividual>> opvC=result.getObjectPropertyValues(service_ont);		
+					objCProperty = datafactory.getOWLObjectProperty(new URI("http://www.daml.org/services/owl-s/1.1/Process.owl#inCondition"));
+					ois = opvC.get(objCProperty);	
+					incond=ois.iterator().next();
+					
+					//expression body of inCondition
+					oc=null;
+					String condExpr="";
+					
+					if(ois!=null){																									
+					Map<OWLDataPropertyExpression, Set<OWLConstant>> dpv=incond.getDataPropertyValues(service_ont);
+					OWLDataProperty dataProperty = datafactory.getOWLDataProperty(new URI("http://www.daml.org/services/owl-s/1.1/generic/Expression.owl#expressionBody"));
+					oc = dpv.get(dataProperty);
+					condExpr=oc.iterator().next().getLiteral();	
+					}
+					condEffects.add(condExpr);
+					
+					ois=null;
+					
+					Map<OWLObjectPropertyExpression, Set<OWLIndividual>> opvE=result.getObjectPropertyValues(service_ont);
+					objEProperty = datafactory.getOWLObjectProperty(new URI("http://www.daml.org/services/owl-s/1.1/Process.owl#hasEffect"));
+					ois = opvE.get(objEProperty);
+					effect=ois.iterator().next();
+				
+					//expression body of Effect
+					oc=null;										
+					String effectExpr="";
+					
+					if(ois!=null){
+					Map<OWLDataPropertyExpression, Set<OWLConstant>> dpv=effect.getDataPropertyValues(service_ont);
+					OWLDataProperty dataProperty = datafactory.getOWLDataProperty(new URI("http://www.daml.org/services/owl-s/1.1/generic/Expression.owl#expressionBody"));
+					oc = dpv.get(dataProperty);
+					effectExpr=oc.iterator().next().getLiteral();					
+					}
+					
+					condEffects.add(effectExpr);
+					cond_effect_list.add(condEffects);
+					}
+					
+					
+					
+				
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}		
+		}	
+		return cond_effect_list;
+	}
+
+	public List<String> getInputs() {
+		
+		List<String> inputs=new ArrayList<String>();
+		
+		InputList inputlist=process.getInputs(); 
+		Iterator<Parameter> ilist = inputlist.iterator();
+		while (ilist.hasNext()) {
+			Parameter ip= ilist.next();
+			//System.out.println("Input: " + ip.toString()); 
+			inputs.add(ip.getURI().toString());
+		} 
+		// TODO Auto-generated method stub
+		return inputs;
+	}
+
+	public List<String> getLocals() {
+		ArrayList<String> locals=new ArrayList<String>();
+		ParameterList pl=process.getLocals();
+		Iterator<Parameter> p = pl.iterator();
+		while (p.hasNext()) {
+			Parameter par= p.next();
+			//System.out.println("Parameter: " + par.toString()); 
+			locals.add(par.getURI().toString());
+		} 
+		return locals;
+		//return null;
+	}
+
+	public List<String> getOutputs() {
+		
+		ArrayList<String> outputs=new ArrayList<String>();
+		OutputList outputlist=process.getOutputs(); 
+		Iterator<Parameter> olist = outputlist.iterator();
+		while (olist.hasNext()) {
+			Parameter op= olist.next();
+			//System.out.println("Output: " + op.toString()); 
+			outputs.add(op.getURI().toString());
+		} 
+		return outputs;
+	}
+
+	public ArrayList<String> getPreconditionExpression() {
+		
+		ArrayList<String> preconditions= new ArrayList<String> ();
+		Set<OWLIndividual> allInds = service_ont.getReferencedIndividuals();
+		
+		Iterator<OWLIndividual> individualList = allInds.iterator();
+		
+		while (individualList.hasNext()) {
+		
+			OWLIndividual oi=null;
+			oi = individualList.next();
+			//System.out.println("Individuals: " + oi.toString()); 
+			
+			 Set<OWLIndividual> ois=null;
+			if (oi.getURI().equals(process.getURI()) ) {
+	           	
+				Map<OWLObjectPropertyExpression, Set<OWLIndividual>> opv=oi.getObjectPropertyValues(service_ont);
+				
+				OWLDataFactory datafactory= man.getOWLDataFactory();
+				OWLObjectProperty objProperty;
+				try {
+					objProperty = datafactory.getOWLObjectProperty(new URI("http://www.daml.org/services/owl-s/1.1/Process.owl#hasPrecondition"));
+					ois = opv.get(objProperty);
+				
+					for(OWLIndividual o:ois){
+										
+					Set<OWLConstant> oc=null;					
+					Map<OWLDataPropertyExpression, Set<OWLConstant>> dpv=o.getDataPropertyValues(service_ont);
+					OWLDataProperty dataProperty = datafactory.getOWLDataProperty(new URI("http://www.daml.org/services/owl-s/1.1/generic/Expression.owl#expressionBody"));
+					oc = dpv.get(dataProperty);
+					preconditions.add(oc.iterator().next().getLiteral());
+					}
+				
+				
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			
+			}
+		} 
+
+		return preconditions;
+	}
+
+	public boolean isValid() {
+	
+		OWLSValidator aValidator = new OWLSValidator();
+
+		boolean aReport = false;
+		try {
+				aReport = aValidator.validate(uri);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}        	  
+			return aReport;	    
+		
+	}
+	
+	
+
+}

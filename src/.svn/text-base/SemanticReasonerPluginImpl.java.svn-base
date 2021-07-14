@@ -1,0 +1,224 @@
+package de.dfki.isreal.semantics;
+
+import java.net.URI;
+import java.util.Set;
+
+import org.mindswap.pellet.owlapi.Reasoner;
+import org.semanticweb.owl.apibinding.OWLManager;
+import org.semanticweb.owl.inference.OWLReasonerException;
+import org.semanticweb.owl.model.OWLOntology;
+import org.semanticweb.owl.model.OWLOntologyCreationException;
+import org.semanticweb.owl.model.OWLOntologyManager;
+import org.mindswap.pellet.KnowledgeBase;
+import org.mindswap.pellet.PelletOptions;
+
+import org.mindswap.pellet.utils.ATermUtils;
+
+import org.semanticweb.owl.model.AddAxiom;
+import org.semanticweb.owl.model.OWLClass;
+import org.semanticweb.owl.model.OWLDataFactory;
+import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owl.model.OWLObjectProperty;
+import org.semanticweb.owl.model.OWLOntologyChangeException;
+
+
+
+public class SemanticReasonerPluginImpl implements SemanticReasonerPlugin {
+
+	static final String	mabox		= "http://127.0.0.1/isreal/messemodul_abox.owl#";
+	static final String	mtbox		= "http://127.0.0.1/isreal/messemodul.owl#";
+	static final String	mindswap	= "http://www.mindswap.org/2003/owl/mindswap#";
+	static final String	foaf		= "http://xmlns.com/foaf/0.1/";
+	
+	Reasoner reasoner=null;
+	OWLOntologyManager manager = null;
+	OWLDataFactory factory = null;
+	OWLOntology ontology = null;
+	
+	public static void main(String[] args)  {	  
+		 
+		 SemanticReasonerPlugin sr= new SemanticReasonerPluginImpl();
+		 //boolean ans=false;
+				 
+	   sr.createReasoner(URI.create(mindswap));
+	   System.out.println("KB Consistency Checking: ");
+	   System.out.println(sr.checkKBConsistency());		 
+	   sr.classify();
+	   sr.realize();
+	   System.out.println("Subsumption Checking: ");
+	   System.out.println(sr.checkClassSubsumption(URI.create(mindswap + "Programmer" ),URI.create(mindswap + "Staff" )  ));			
+	   System.out.println("Class Consistency Checking: ");
+	   System.out.println(sr.checkClassConsistency(URI.create( mindswap + "Staff" )));
+	   System.out.println("Equivalence Checking: ");
+	   System.out.println(sr.checkClassEquivalence(URI.create( mindswap + "Programmer" ),URI.create( foaf + "Person" ) ));
+	   System.out.println("Class Disjunction: ");
+	   System.out.println(sr.checkClassDisjunction(URI.create( mindswap + "Programmer" ),URI.create( foaf + "Document" )) );
+	   
+	  
+	   sr.createReasoner(URI.create(mabox));
+	   System.out.println("Instance Checking: ");
+	   System.out.println(sr.instanceChecking(URI.create( mabox + "Carriage01"),URI.create( mtbox + "carriage" ) ));
+		
+	} 
+	
+	public void createReasoner(URI ont)
+	{
+		System.out.println("");
+		System.out.println("Reading ontology ...");
+		 manager = OWLManager.createOWLOntologyManager();
+		 factory = manager.getOWLDataFactory();
+			
+			try {
+				ontology = manager.loadOntology(ont);
+				
+				//ontology = manager.loadOntology(URI.create(mabox)); // for KBConsistency
+				//ontology = manager.loadOntology(URI.create(mindswappers)); // for classConsistency and classSubsumption
+				//ontology = manager.loadOntology(URI.create(ont_name));
+				
+			} catch (OWLOntologyCreationException e) {
+				e.printStackTrace();
+			}
+		reasoner = new Reasoner( manager );
+		PelletOptions.SILENT_UNDEFINED_ENTITY_HANDLING=false;
+		// Reasoner 
+		// manager.addOntologyChangeListener( reasoner );			
+		reasoner.loadOntology(ontology);
+		System.out.println("Ontology and reasoner loaded");
+	}
+
+	@Override
+	public boolean checkKBConsistency() {		
+	
+		System.out.println( "\nKnowledgebase consistency" );
+		System.out.println( "--------------------------" );		
+		System.out.println( "KnowledgeBase consistency:"+reasoner.getKB().isConsistent());	
+		return reasoner.getKB().isConsistent(); 		
+	}
+	
+	public boolean checkClassConsistency(URI c) {
+		
+		System.out.println( "\nClass consistency (Satisfiability)" );
+		System.out.println( "--------------------------" );		
+	
+		OWLClass c1 = factory.getOWLClass(c);
+		
+		//OWLClass c2 = factory.getOWLClass( URI.create( mindswap + "OWLClass" ));
+		/*Set<OWLClass> classes=reasoner.getClasses();
+		for (OWLClass cl: classes)
+			System.out.println("claasses: "+cl);  */
+		//System.out.println( "subclass of thing:"+reasoner.isSubClassOf(c1, c2));
+		
+		//System.out.println( "Satisfiability:"+reasoner.isSatisfiable(c1));
+			
+		return reasoner.isSatisfiable(c1);
+	
+	}
+
+	@Override
+	public boolean checkClassDisjunction(URI c1, URI c2) {
+		
+		System.out.println( "\nClass Disjunction" );
+		System.out.println( "--------------------------" );		
+	
+		OWLClass c11 = factory.getOWLClass(c1); System.out.println( "Class 1: "+c11.toString());
+		OWLClass c12 = factory.getOWLClass(c2); System.out.println( "Class 2: "+c12.toString());
+		Set<Set<OWLClass>> classes=reasoner.getDisjointClasses(c11); //System.out.println( "size"+classes.size());
+		for (Set<OWLClass> cl: classes)
+			for (OWLClass dis: cl)
+				System.out.println("disjoint class with "+c11+" is: "+dis);  
+		
+		//System.out.println( "Disjunction:"+reasoner.isDisjointWith(c11, c12));				
+		
+		return reasoner.isDisjointWith(c11, c12);
+	}
+
+	@Override
+	public boolean checkClassEquivalence(URI c1, URI c2) {
+		
+		System.out.println( "\nClass Equivalence" );
+		System.out.println( "--------------------------" );		
+	
+		OWLClass c11 = factory.getOWLClass(c1); System.out.println( "Class 1: "+c11.toString());
+		OWLClass c12 = factory.getOWLClass(c2); System.out.println( "Class 2: "+c12.toString());
+		Set<OWLClass> classes=reasoner.getEquivalentClasses(c11); //System.out.println( "size"+classes.size());
+		for (OWLClass cl: classes)
+				System.out.println("Equivalence class with "+c11+" is: "+cl);
+	//	System.out.println( "Equivalence:"+reasoner.isEquivalentClass(c11, c12));				
+		
+		return reasoner.isEquivalentClass(c11, c12);
+	}
+
+	@Override
+	public boolean checkClassSubsumption(URI c1, URI c2) {
+	
+		System.out.println( "\nClass Subsumption" );
+		System.out.println( "--------------------------" );		
+	
+		OWLClass c11 = factory.getOWLClass(c1); System.out.println( "Class 1: "+c11.toString());
+		OWLClass c12 = factory.getOWLClass(c2); System.out.println( "Class 2: "+c12.toString());
+		
+		Set<Set<OWLClass>> classes=reasoner.getSubClasses(c12); //System.out.println( "size"+classes.size());
+		for (Set<OWLClass> cl: classes)
+			for (OWLClass sub: cl)
+				System.out.println("Subsumed class of "+c12+" is: "+sub);
+		//System.out.println( "Subsumption:"+reasoner.isSubClassOf(c11, c12));				
+		
+		return reasoner.isSubClassOf(c11, c12);
+	
+	}
+
+	@Override
+	public void classify() {
+		// TODO Auto-generated method stub
+		
+		//IncrementalClassifier classifier = new IncrementalClassifier( manager );
+		
+			System.out.println("--------Before Classification!!!!!!!!!!!!!!");
+			reasoner.getKB().printClassTree();
+			//classifier.classify();
+			reasoner.getKB().classify();
+		
+		System.out.println("---------After Classification!!!!!!!!!!!!!!");
+		reasoner.getKB().printClassTree();
+	}
+
+	@Override
+	public void realize() {
+	
+		System.out.println("------------Before Realization!!!!!!!!!!!!!!");
+		reasoner.getKB().printClassTree();
+			/*	try {
+					reasoner.realise();
+				} catch (OWLReasonerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} */
+			reasoner.getKB().realize();
+			System.out.println("----------After Realization!!!!!!!!!!!!!!");
+			reasoner.getKB().printClassTree();
+		
+	}
+
+	@Override
+	public boolean instanceChecking(URI ind_uri, URI class_uri) {
+		
+		boolean confirm=false;
+		System.out.println( "Instance Checking" );
+		System.out.println( "--------------------------" );	
+		
+		OWLIndividual ind=factory.getOWLIndividual(ind_uri);
+		System.out.println( "Individual: "+ind.toString());
+		
+		OWLClass c=factory.getOWLClass(class_uri);
+		System.out.println( "Class : "+c.toString());
+				
+		System.out.println("Type of "+ind.toString()+ " is:" +reasoner.getType(ind));
+		if(c.toString().equals(reasoner.getType(ind).toString()))
+		{
+			confirm=true;
+			
+		}
+		return confirm;
+	}
+
+}

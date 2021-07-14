@@ -1,0 +1,298 @@
+package de.dfki.isreal.semantics;
+
+import java.io.FileNotFoundException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+
+import org.mindswap.owl.OWLFactory; 
+import org.mindswap.owl.OWLIndividualList;
+
+import org.mindswap.owl.OWLKnowledgeBase; 
+import org.mindswap.owls.process.Process;
+import org.mindswap.owls.process.ResultList;
+import org.mindswap.owls.service.Service;
+import org.semanticweb.owl.apibinding.OWLManager; 
+import org.semanticweb.owl.model.OWLConstant;
+import org.semanticweb.owl.model.OWLDataFactory;
+import org.semanticweb.owl.model.OWLDataProperty;
+import org.semanticweb.owl.model.OWLDataPropertyExpression;
+import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owl.model.OWLObjectProperty;
+import org.semanticweb.owl.model.OWLObjectPropertyExpression;
+import org.semanticweb.owl.model.OWLOntologyManager;
+
+import org.semanticweb.owl.model.OWLOntology;
+import org.semanticweb.owl.model.OWLOntologyCreationException;
+//import org.semanticweb.owl.model.OWLPropertyExpression;
+
+public class ServiceProperties {
+   
+	public static final URI OWL_S_PROCESS = URI.create("http://www.daml.org/services/owl-s/1.1/Process.owl#");    
+    public static final URI OWL_S_PROCESS_HAS_PRECONDITION = URI.create(OWL_S_PROCESS + "hasPrecondition"); 
+    public static final URI OWL_S_PROCESS_HAS_RESULT = URI.create(OWL_S_PROCESS + "hasResult");    
+    public static final URI OWL_S_PROCESS_HAS_EFFECT = URI.create(OWL_S_PROCESS + "hasEffect");    
+    
+    public static final URI OWL_S_EXPRESSION = URI.create("http://www.daml.org/services/owl-s/1.1/generic/Expression.owl#");    
+    public static final URI OWL_S_EXPRESSION_EXPRESSION_BODY = URI.create(OWL_S_EXPRESSION + "expressionBody");
+    
+	static OWLOntology service_ont = null;
+	static Process process=null;
+	static OWLOntologyManager man = null;
+
+	public static void main(String[] args) throws OWLOntologyCreationException, URISyntaxException {
+
+		URI aURI = null;
+		ArrayList<String> str=new ArrayList<String>();
+		aURI = new URI("http://127.0.0.1/isreal/flip_slider.owl");
+		
+		loadServiceProcessOntology(aURI);
+		str= getPropertyfromOntology(OWL_S_PROCESS_HAS_PRECONDITION );	
+		//str = getPropertyfromOntology(OWL_S_PROCESS_HAS_RESULT);
+		for(String s:str)
+			System.out.println("Required String : "+s);
+	}
+	
+	
+	public static void loadServiceProcessOntology(URI aURI) {
+		
+		OWLKnowledgeBase aKB = OWLFactory.createKB();
+
+		aKB.setReasoner("RDFS");
+		Service service = null;
+		try {
+			service = aKB.readService(aURI);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("service name: " + service.getLocalName());
+		process = service.getProcess();
+		System.out.println("process name: " + process.getLocalName());
+
+		try {
+			man = OWLManager.createOWLOntologyManager();
+			service_ont = (OWLOntology) man.loadOntologyFromPhysicalURI(process.getURI());
+			//System.out.println("ServICE ONTOLOGY:"+service_ont);			
+			
+		} catch (OWLOntologyCreationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	/* public static ArrayList<String> getPropertyfromOntology(URI property) {		
+		
+		ArrayList<String> str = null;
+		Set<OWLIndividual> allInds = service_ont.getReferencedIndividuals();
+		Iterator<OWLIndividual> individualList = allInds.iterator();
+
+		while (individualList.hasNext()) {
+
+			OWLIndividual oi = individualList.next(); 
+			System.out.println("Individual: " + oi.toString()); 
+						
+			if (oi.getURI().equals(process.getURI()) ) {
+				
+				str=getPreconditions(oi);
+				str=getResults
+				//precond_effect = null;
+				
+	
+				Set<OWLIndividual> oInds=null;
+				Set<OWLConstant> oCons=null;
+				
+				oInds = getObjectIndividuals(oi,property); //hasprecondition or hasResult
+			
+				for(OWLIndividual oin:oInds)					
+				{	
+					String res=null;
+					Set<OWLIndividual> rins=null;
+					rins=getObjectIndividuals(oin,OWL_S_PROCESS_HAS_EFFECT);
+					if(rins!=null)
+					{
+						for(OWLIndividual rin:rins)
+						{ 
+							oCons=getDataConstants(rin,OWL_S_EXPRESSION_EXPRESSION_BODY); //expressionbody
+							res=oCons.toString();
+						}
+					}
+					else
+					{
+						oCons=getDataConstants(oin,OWL_S_EXPRESSION_EXPRESSION_BODY); //expressionbody
+						res=oCons.toString();
+					}
+					System.out.println("Required String : "+res); 
+				}
+				
+			} 
+			
+		}
+		return str;
+	} */
+	
+public static ArrayList<String> getPropertyfromOntology(URI uri) {		
+		
+		ArrayList<String> str=new ArrayList<String>();
+		Set<OWLIndividual> allInds = service_ont.getReferencedIndividuals();
+		Iterator<OWLIndividual> individualList = allInds.iterator();
+
+		while (individualList.hasNext()) {
+			OWLIndividual oi=null;
+			oi = individualList.next();
+			
+			System.out.println("Individuals: " + oi.toString()); 
+			
+			if (oi.getURI().equals(process.getURI()) && uri.equals(OWL_S_PROCESS_HAS_PRECONDITION)) {
+				
+				str=getPreconditions(oi);					
+			}
+			else if(oi.getURI().equals(process.getURI()) && uri.equals(OWL_S_PROCESS_HAS_RESULT)) {
+				str=getResults(oi);				
+			}
+		}	
+		System.out.println("uri; " + uri ); 
+		
+		
+		return str;
+	} 
+	
+	public static ArrayList<String> getPreconditions(OWLIndividual oi)
+	{
+		ArrayList<String> str=new ArrayList<String>();
+		Set<OWLIndividual> objInds=null;
+		
+		objInds=getObjectIndividuals(oi,OWL_S_PROCESS_HAS_PRECONDITION);
+		
+		for(OWLIndividual oin:objInds)					
+		{				
+			System.out.println("precon individuals : "+oin);		
+			str.add(getExpressionBody(oin)); //expressionbody				
+		}			
+		return str;
+	}
+	
+	public static ArrayList<String> getResults(OWLIndividual oi)
+	{
+		ArrayList<String> str=new ArrayList<String>();
+		Set<OWLIndividual> rObjInds=null;
+		rObjInds= getObjectIndividuals(oi,OWL_S_PROCESS_HAS_RESULT);
+		
+		for(OWLIndividual r:rObjInds)					
+		{						
+			Set<OWLIndividual> eObjInds=null;
+			eObjInds= getEffects(r);
+			
+			for(OWLIndividual e:eObjInds)					
+			{
+			str.add(getExpressionBody(e)); //expressionbody	
+			}
+		}
+		return str;
+	}
+	
+	public  static Set<OWLIndividual> getEffects(OWLIndividual oi)
+	{
+		return getObjectIndividuals(oi,OWL_S_PROCESS_HAS_EFFECT);	
+	}
+	
+	public static String getExpressionBody(OWLIndividual oi)
+	{	
+		return getDataConstants(oi,OWL_S_EXPRESSION_EXPRESSION_BODY).iterator().next().getLiteral();
+	}
+	
+	public static  Set<OWLIndividual> getObjectIndividuals(OWLIndividual oi,URI oProperty) {
+		
+		Set<OWLIndividual> ois=null;
+		Map<OWLObjectPropertyExpression, Set<OWLIndividual>> opv=oi.getObjectPropertyValues(service_ont);
+		
+		OWLDataFactory datafactory= man.getOWLDataFactory();
+		OWLObjectProperty objProperty = datafactory.getOWLObjectProperty(oProperty);
+		
+		ois = opv.get(objProperty);
+		//System.out.println("ObjectpropertyExpression: "+ois);
+		
+		return ois;
+	}
+	
+
+	
+	public static  Set<OWLConstant> getDataConstants(OWLIndividual oi,URI dProperty) {
+		
+		Set<OWLConstant> oc=null;
+	
+		Map<OWLDataPropertyExpression, Set<OWLConstant>> dpv=oi.getDataPropertyValues(service_ont);
+		
+		OWLDataFactory datafactory= man.getOWLDataFactory();
+		OWLDataProperty dataProperty = datafactory.getOWLDataProperty(dProperty);
+		
+		oc = dpv.get(dataProperty);
+		System.out.println("DataPropertyExpression: "+dataProperty);	
+		return oc;
+	}
+	
+	/*public static String geDataPropertyValue(OWLIndividual oi,String dProperty) {
+	
+	//Set<OWLConstant> oc=null;
+	
+	String oc=null;
+	Map<OWLDataPropertyExpression, Set<OWLConstant>> dpv=oi.getDataPropertyValues(service_ont);
+	
+	for (OWLDataPropertyExpression dpe: dpv.keySet())
+	{
+		//System.out.println("Data Property of "E: " +dpe);
+		
+		if(dpe.toString().equals(dProperty)){
+		System.out.println("DataPropertyExpression: "+dpe);
+	
+		//oc=dpv.get(dpe);		
+		
+		oc=dpv.get(dpe).iterator().next().getLiteral();	
+		}		
+	}		
+	return oc;
+} 
+	
+	public static String getPrecondition(OWLIndividual oi) {
+		String precon = null;
+		Map<OWLDataPropertyExpression, Set<OWLConstant>> preconditions = oi.getDataPropertyValues(service_ont);
+		
+		System.out.println("size: " + preconditions.size());
+		
+		if (preconditions.size() == 1) {
+			for (OWLDataPropertyExpression property : preconditions.keySet()) {
+				
+			//System.out.println("precond test: " + property.toString());
+			//	System.out.println("body: "+preconditions.get(property).iterator().next().getLiteral());
+			//  result = preconditions.get(property).toString();
+				precon = preconditions.get(property).iterator().next().getLiteral();
+			} 
+			
+		}
+
+		return precon;
+	}
+
+	public static String getEffect(OWLIndividual oi) {
+		String effect = null;
+		Map<OWLDataPropertyExpression, Set<OWLConstant>> effects = oi.getDataPropertyValues(service_ont);
+		
+		System.out.println("size: " + effects.size());
+		
+		if (effects.size() == 1) {
+			for (OWLDataPropertyExpression property : effects.keySet()) {
+				System.out.println("effect test: " + property.toString());
+				// System.out.println("body: "+effects.get(property).toString());
+				effect = effects.get(property).iterator().next().getLiteral();
+			}
+		}
+		return effect;
+	} */
+
+	
+}

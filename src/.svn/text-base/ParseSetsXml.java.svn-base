@@ -1,0 +1,75 @@
+package de.dfki.isreal.semantics;
+
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
+
+public class ParseSetsXml extends DefaultHandler{
+	
+	ArrayList<String> statement=new ArrayList<String>();
+	String NL=new String();
+	HashMap<ArrayList<String>, String> m= new HashMap<ArrayList<String>,String>();
+	int nflag=0;
+	int sflag=0;
+	
+	public void startDocument() {
+	   // System.out.println("start document");
+	  }
+
+	  public void endDocument() {
+	   // System.out.println("end document");	    
+	  }
+	  public HashMap returnMap ()
+	  {
+		  return m;
+	  }
+	  public void startElement(String uri, String localName, String qName, Attributes attributes) {
+		  
+		  //System.out.println("startElement"+qName);
+		  if(qName.equals("subject") || qName.equals("predicate") ||qName.equals("object")) 	 
+			  	sflag=1;
+		  else if(qName.equals("nl")) 
+			  nflag=1;
+   
+		
+	  }
+
+	  public void endElement(String uri, String localName, String qName) {
+	  // System.out.println("end element: " + qName);
+		  if(qName.equals("subject") || qName.equals("predicate") ||qName.equals("object")) 	 
+			  	sflag=0;
+		  else if(qName.equals("nl")) 
+			  nflag=0;
+		  else if(qName.equals("set") )//&& (statement.get(0).length()>1 && statement.get(1).length()>1))
+		  {
+			  //System.out.println("jjj"+statement);
+			  m.put(statement, NL);
+		  }
+	  }
+
+	  public void ignorableWhitespace(char[] ch, int start, int length) {
+	   
+	    //System.out.println("whitespace, length " + length);
+	  }
+
+	  public void processingInstruction(String target, String data) {
+	   
+	 // System.out.println("processing instruction: " + data);
+	  }
+
+	  public void characters(char[] ch, int start, int length){
+		  
+		  String str=String.valueOf(ch, start, length-1);
+		 if(sflag==1)
+			 statement.add(str);
+		 else if(nflag==1)
+			 NL=str;
+		//System.out.println("chars: "+ str.length());
+	  }
+
+}
+

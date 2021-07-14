@@ -1,0 +1,87 @@
+package de.dfki.isreal.semantics;
+
+import java.io.*;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.mindswap.owl.OWLFactory;
+import org.mindswap.owl.OWLKnowledgeBase;
+import org.mindswap.owls.service.Service;
+import examples.OWLSValidator;
+
+public class ServiceRegistryImpl implements ServiceRegistry{
+	 
+	ArrayList<URI> uris=new ArrayList<URI>(); // of default size (10)
+	 //static String SERVICE_PHYSICAL_LOC= "C:\\xampp//htdocs//isreal//";
+	 //static String SERVICE_ONT_LOC= "http://127.0.0.1/isreal/";
+	static String BASIC_URI="http://www.mindswap.org/2004/owl-s/1.1/";
+	//static String BASIC_URI="http://127.0.0.1/isreal/";
+	
+	 public static void main(String[] args) {
+		 
+	       
+	 }
+	
+	
+	public void addService(String uri){
+		if(uris.contains(uri)==false)
+			uris.add(URI.create(uri));		
+	}
+	
+   public void removeService(String uri){
+	   if(uris.contains(URI.create(uri))){
+	   uris.remove(uris.indexOf(URI.create(uri)));
+		 }	   
+   }
+	
+	public void printServices(){
+		for (URI u : uris){
+			System.out.println("printServices-URIs: "+u);
+		} 
+	}
+		
+	public List<URI> getServices(){	
+				return uris;
+	}
+	
+
+	public boolean isValidService(String uri){
+		
+	    OWLSValidator aValidator = new OWLSValidator();
+
+	    boolean aReport = false;
+		try {
+			aReport = aValidator.validate(uri);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}        	  
+		return aReport;
+	    
+	}
+	
+public Service getService(String uri){
+	
+	Service aService=null; 
+
+	OWLKnowledgeBase aKB = OWLFactory.createKB();
+		    
+	try {
+			aService = aKB.readService(URI.create(uri));
+		} 
+	catch (FileNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  if(isValidService(uri)==false)
+		  aService=null;    
+	 return aService; 
+	}
+
+
+public Service getServiceFromActionName(String name) {
+		
+	return getService(BASIC_URI+name+".owl");
+	}
+}

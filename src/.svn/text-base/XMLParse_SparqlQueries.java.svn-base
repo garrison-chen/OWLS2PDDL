@@ -1,0 +1,236 @@
+package de.dfki.isreal.semantics;
+
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+
+import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
+
+import com.sun.org.apache.xerces.internal.parsers.SAXParser;
+
+public class XMLParse_SparqlQueries extends DefaultHandler{
+	
+	
+	
+	int param_flag=0;
+	int pred_flag=0;
+	
+	String root=null;
+	String left_child=null;
+	String right_child=null;
+	String property=null;
+	
+	ArrayList<ArrayList<String>> queries=new ArrayList<ArrayList<String>>();
+	//ArrayList<String> query=new ArrayList<String>();
+	ArrayList<ArrayList<String>> final_Query=new ArrayList<ArrayList<String>>();
+	
+
+   public void startDocument() {
+    //System.out.println("start document");
+  }
+
+   
+  public void endDocument() {
+   // System.out.println("end document");
+	  print_Queries();
+	  System.out.println(".........................");
+	  //create_finalQuery();
+	  //print_finalQuery();	  
+  }
+  
+  public void print_Queries()
+  {
+	  System.out.println("Queries");
+	  for(ArrayList<String> q: queries)
+	  { 
+		  // System.out.println(q.get(0)+" "+q.get(1)+" "+q.get(2));
+		  System.out.println(q);
+		
+	  }
+  }
+  
+  public ArrayList<String> getTriple(Binding b)
+  {
+	  ArrayList<String> triple=new ArrayList<String>();
+	  
+	  if(queries.get(0).get(2)==null)
+	  {
+	  triple.add(b.getIndividual(queries.get(0).get(0)));
+	  triple.add("rdf:type");
+	  triple.add(queries.get(0).get(1));
+	  }
+	  else
+	  {
+	  triple.add(b.getIndividual(queries.get(0).get(0)));
+	  triple.add(queries.get(0).get(1));
+	  triple.add(b.getIndividual(queries.get(0).get(0)));
+	  }
+	  
+	  return triple;
+	  
+  } 
+  
+  
+  public String createSparqlQuery(Binding b)
+  {
+	  String sprql_query="PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ASK { ";
+		  
+	  for (int ind=0; ind<queries.size(); ind++)
+		{
+			
+		if(queries.get(ind).get(2)==null)
+			sprql_query=sprql_query+" "+b.getIndividual(queries.get(ind).get(0))+" rdf:type "+queries.get(ind).get(1)+".";  
+		else
+		 sprql_query=sprql_query+" "+b.getIndividual(queries.get(ind).get(0))+" "+queries.get(ind).get(1)+" "+b.getIndividual(queries.get(ind).get(2))+".";
+		// avoid adding root after the last query		
+		//if(ind< queries.size()-1 ) sprql_query=sprql_query+" "+root; 
+		}
+	  sprql_query=sprql_query+" }";
+	  
+	return sprql_query;
+  }
+  
+  
+  public void startElement(String uri, String localName, String qName, Attributes attributes) {
+		 	 
+	//System.out.println("start element: "+qName);
+	if(root==null && qName!="param" && qName!="pred") {
+		root=qName;
+		System.out.println("root selected: "+root);
+	}
+	else if(root!=null && localName.equals("pred")){
+		pred_flag=1;
+		property=attributes.getValue("name");
+		System.out.println("property selected: "+property);
+	}
+	else if(root!=null && localName.equals("param")){
+		param_flag=1;		
+	}
+  }
+  
+  
+  public void createQueries()
+  {
+	  ArrayList<String> query=new ArrayList<String>();
+	   
+	   /*if(right_child==null)
+	   {
+		   right_child=property;
+		   property="rdf:type" ; 
+	   } */
+	   query.add(left_child);
+	   query.add(property);
+	   query.add(right_child);	   
+	   queries.add(query);	   
+  }
+  
+  public void endElement(String uri, String localName, String qName) {
+	  
+   //System.out.println("end element: " + qName);
+   if(localName.equals("pred"))
+   {
+	  createQueries();   
+	   
+	  left_child=null;
+	  right_child=null;
+	  property=null;
+	  pred_flag=0;	   
+	  System.out.println("..........................: ");
+	 
+   }
+   else if(localName.equals("param"))
+	   param_flag=0;
+  }
+  
+  
+
+  public void ignorableWhitespace(char[] ch, int start, int length) {
+      // System.out.println("whitespace, length " + length);
+  }
+
+  public void processingInstruction(String target, String data) {   
+  //  System.out.println("processing instruction: " + data);
+  }
+
+  public void characters(char[] ch, int start, int length){
+	 if(param_flag==1)
+	 {
+	  if(left_child==null)
+	  {
+		 left_child=String.valueOf(ch, start, length);
+		 System.out.println("Left child selected: "+left_child);
+	  }
+	  else if(left_child!=null && right_child==null)
+	  {
+		  right_child=String.valueOf(ch, start, length);
+		  System.out.println("Right child selected: "+right_child);
+	  }
+	 }
+		
+ }
+  
+  public static void main(String[] args) {
+		 
+			URI aURI = null;
+			try {
+				aURI = new URI("http://127.0.0.1/isreal/flip_slider.owl");
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			ServiceProperties sp=new ServiceProperties();
+			ArrayList<String> strPre=new ArrayList<String>();
+			ArrayList<String> strRes=new ArrayList<String>();
+
+			sp.loadServiceProcessOntology(aURI);
+			strPre= sp.getPropertyfromOntology(URI.create("http://www.daml.org/services/owl-s/1.1/Process.owl#hasPrecondition"));
+			strRes= sp.getPropertyfromOntology(URI.create("http://www.daml.org/services/owl-s/1.1/Process.owl#hasResult"));
+			
+			String precondition=new String();
+			String effect=new String();
+			
+			precondition= strPre.get(0);
+			effect= strRes.get(0);
+			
+			//System.out.println("Precondition :"+ strPre);
+			System.out.println("Effect:"+ strRes);
+					
+			XMLParse_SparqlQueries t = new XMLParse_SparqlQueries ();
+			SAXParser p = new SAXParser();
+			
+						
+			System.out.println("Start Parsing---------------!!! " );
+			p.setContentHandler(t);
+			try {
+				ByteArrayInputStream objBAInputStreamPre = new java.io.ByteArrayInputStream(precondition.getBytes());
+				InputSource ojbInputSourcePre = new InputSource(objBAInputStreamPre);
+				p.parse(ojbInputSourcePre); 
+				
+				ByteArrayInputStream objBAInputStream = new java.io.ByteArrayInputStream(effect.getBytes());
+				InputSource ojbInputSource = new InputSource(objBAInputStream);
+				p.parse(ojbInputSource); 
+			
+				
+				String sparql_query=null;
+				Binding b=new BindingImpl();
+				b.addPair("?http://127.0.0.1/isreal/flip_slider.owl#Slider", "http://127.0.0.1/isreal/flip_slider.owl#Slider01");
+				b.addPair("?http://127.0.0.1/isreal/flip_slider.owl#Area", "http://127.0.0.1/isreal/flip_slider.owl#Area01");
+				b.addPair("?http://127.0.0.1/isreal/flip_slider.owl#BluePill", "http://127.0.0.1/isreal/flip_slider.owl#BluePill01");
+				b.addPair("?http://127.0.0.1/isreal/flip_slider.owl#BluePill", "http://127.0.0.1/isreal/flip_slider.owl#BluePill02");
+				
+				sparql_query=t.createSparqlQuery(b);
+				System.out.println("[ SPARQL QUERY ] ---------------:");
+				System.out.println(sparql_query); 
+				
+				ArrayList<String> triple=new ArrayList<String>();
+				triple=t.getTriple(b);
+				System.out.println("Triples ---------------:");
+				System.out.println(triple);
+				
+	    	} 
+			catch (Exception e) { e.printStackTrace(); }  
+	  		}   
+ }

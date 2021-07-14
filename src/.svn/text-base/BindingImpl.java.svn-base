@@ -1,0 +1,115 @@
+package de.dfki.isreal.semantics;
+
+// Author: Sadia Masood
+
+import java.util.*;
+
+public class BindingImpl implements Binding {
+
+	//Map map = new HashMap();
+	
+	/* public static void main(String[] args) {
+			
+			BindingImpl binding=new BindingImpl();
+			binding.addPair("Door","door01");
+			binding.addPair("Slider","slider01");
+			System.out.println("Individual: "+binding.getIndividual("Door"));
+			System.out.println("Variable: "+binding.getVariable("slider01")); 
+	} 
+		
+	
+	public void addPair(String var, String ind) {
+		map.put(ind,var);
+	}
+	
+	public String getIndividual(String variable) {
+		
+		String ind="Individual not found";
+		
+		for (Iterator i = map.keySet().iterator(); i.hasNext();) 
+		{
+			String key = (String)i.next();
+			if (map.get(key)==variable) 
+				ind=key;			
+		}
+			return ind;	
+	}
+	
+	
+	public String getVariable(String individual) {
+		
+		String var="Variable not found";
+		
+		if(map.containsKey(individual))
+				var=(String) map.get(individual);
+		return var;
+	} */
+
+	ArrayList<ArrayList> row = new ArrayList<ArrayList>();  
+	ArrayList<String> col=null;
+	
+	/*  public static void main(String[] args) {
+		
+		BindingImpl binding=new BindingImpl();
+		binding.addPair("Door","door01");
+		binding.addPair("Slider","slider01");
+		System.out.println("Individual: "+binding.getIndividual("Door"));
+		System.out.println("Variable: "+binding.getVariable("door01")); 
+}*/
+	
+		public void addPair(String var, String ind) {
+			
+		int add_flag=0;
+		
+		for(ArrayList<String> r:row)
+		{ if(r.get(0)==var) add_flag=1;	
+		}
+		
+		if(add_flag==0)
+		{
+		col = new ArrayList<String>(); 
+		col.add(var);
+		col.add(ind);		
+		row.add(col);
+		}
+		else
+			System.out.println("Variable not added(already exists) in the binding:- "+var);
+	}
+
+	
+	public String getIndividual(String variable) {
+			//return map.get(variable);
+		String ind=null;
+			
+		for(ArrayList<String> r: row)
+		{
+			if(r.get(0).contains(variable)) 
+					ind= r.get(1);			
+		}
+		if(ind==null)
+			System.out.println("Individual not found!");
+		
+		return ind;
+	}
+	
+	public String getVariable(String individual) {
+		
+		String var=null;
+		
+		for(ArrayList<String> r: row)
+		{
+			if(r.get(1).contains(individual)) 
+					var= r.get(0);			
+		}
+		if(var==null)
+			System.out.println("Variable not found!");
+		
+		return var;
+	
+	} 
+	
+	public ArrayList<ArrayList> getPairs() {
+		return row;
+	}
+
+} 

@@ -1,0 +1,290 @@
+/**
+ *
+ * @date 20.05.2009
+ * @author Stefan Nesbigall
+ */
+package de.dfki.isreal.semantics;
+
+import java.net.URI;
+import java.util.Set;
+
+import org.semanticweb.owl.apibinding.OWLManager;
+import org.semanticweb.owl.io.RDFXMLOntologyFormat;
+import org.semanticweb.owl.model.AddAxiom;
+import org.semanticweb.owl.model.OWLAxiom;
+import org.semanticweb.owl.model.OWLClass;
+import org.semanticweb.owl.model.OWLClassAxiom;
+import org.semanticweb.owl.model.OWLConstant;
+import org.semanticweb.owl.model.OWLDataFactory;
+import org.semanticweb.owl.model.OWLDataProperty;
+import org.semanticweb.owl.model.OWLDataPropertyAxiom;
+import org.semanticweb.owl.model.OWLDataPropertyExpression;
+import org.semanticweb.owl.model.OWLDescription;
+import org.semanticweb.owl.model.OWLEntity;
+import org.semanticweb.owl.model.OWLImportsDeclaration;
+import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owl.model.OWLIndividualAxiom;
+import org.semanticweb.owl.model.OWLObjectProperty;
+import org.semanticweb.owl.model.OWLOntology;
+import org.semanticweb.owl.model.OWLOntologyChange;
+import org.semanticweb.owl.model.OWLOntologyChangeException;
+import org.semanticweb.owl.model.OWLOntologyCreationException;
+import org.semanticweb.owl.model.OWLOntologyManager;
+import org.semanticweb.owl.model.OWLOntologyStorageException;
+import org.semanticweb.owl.model.OWLPropertyAxiom;
+import org.semanticweb.owl.model.SWRLAtom;
+import org.semanticweb.owl.model.SWRLAtomIVariable;
+import org.semanticweb.owl.model.SWRLObjectPropertyAtom;
+import org.semanticweb.owl.model.SWRLRule;
+import org.semanticweb.owl.model.UnknownOWLOntologyException;
+import org.semanticweb.owl.util.AutoURIMapper;
+import org.semanticweb.owl.util.SimpleURIMapper;
+
+/**
+ * @author Stefan Nesbigall
+ * 
+ */
+public class SemanticEnv {
+
+	OWLOntologyManager manager = null;
+	OWLOntology knowledge = null;
+	OWLOntology spatial_o = null;
+	OWLOntology domain_tbox = null;
+	String name = "";
+	
+	static String SPATIAL_LOC = "http://127.0.0.1/isreal/spatial_ontology.owl";
+	static String ONT_LOC_Dir = "http://127.0.0.1/isreal/";
+	static String PHYS_LOC_Dir = "file:///var/www/isreal/";
+
+	public SemanticEnv(URI domain_location, URI knowledge_location) {
+		manager = OWLManager.createOWLOntologyManager();
+		spatial_o = loadOntologyFromFile(URI.create(SPATIAL_LOC));
+		domain_tbox = loadOntologyFromFile(domain_location);
+		knowledge = loadOntologyFromFile(knowledge_location);
+		
+	}
+	
+	/*
+	 * 
+	 */
+	public SemanticEnv(String id, URI domain_location) {
+		manager = OWLManager.createOWLOntologyManager();
+		
+		this.name = id;
+		spatial_o = loadOntologyFromFile(URI.create(SPATIAL_LOC));
+		domain_tbox = loadOntologyFromFile(domain_location);
+		initKnowledgeBase(URI.create(ONT_LOC_Dir + name + "_ontology.owl"), URI.create(PHYS_LOC_Dir + name + "_ontology.owl"));
+		OWLOntology o = null;
+	}
+	
+/*	
+	
+	public static void main(String[] args) {
+		//SemanticEnv env = new SemanticEnv();
+		
+		
+
+		OWLIndividual ind = getIndividual(URI
+				.create("http://127.0.0.1/ontology/messemodul.owl#SlidePlate"));
+		OWLDataProperty up = getDataProperty(URI
+				.create("http://127.0.0.1/ontology/messemodul.owl#isUp"));
+
+		for (OWLDescription d : ind.getTypes(ontologies.get(0))) {
+			System.out.println(d.toString());
+		}
+
+		Map<OWLDataPropertyExpression, Set<OWLConstant>> valmap = ind
+				.getDataPropertyValues(ontologies.get(0));
+		Set<OWLConstant> cons = valmap.get(up);
+		for (OWLConstant c : cons) {
+			System.out.println(c.getLiteral());
+		}
+
+		System.out.println("---------------------------------------------");
+		printOntology(ontologies.get(0));
+
+		Set<OWLIndividualAxiom> ax = getIndividualAxioms(URI.create("http://127.0.0.1/ontology/messemodul.owl#SlidePlate"));
+		updateOntology(ax, ontologies.get(1));
+
+		System.out.println("---------------------------------------------");
+		printOntology(ontologies.get(1));
+		
+	}
+*/
+/*	
+	public static void loadOntologiesFromDir(File dir) {
+		AutoURIMapper map = new AutoURIMapper(dir, true);
+
+		for (URI uri : map.getOntologyURIs()) {
+			OWLOntology ontology = loadOntologyFromFile(map.getPhysicalURI(uri));
+			//ontologies.add(ontology);
+		}
+	}
+*/
+	
+	public OWLOntology loadOntologyFromFile(URI uri) {
+		OWLOntology ontology = null;
+		try {
+			ontology = manager.loadOntologyFromPhysicalURI(uri);
+			//System.out.println("All classes:"+ontology.getReferencedClasses());
+            
+		} catch (OWLOntologyCreationException e) {
+			System.out.println("Cannot create ontology from " + uri.getPath());
+			e.printStackTrace();
+		}
+
+		return ontology;
+	}
+	
+	public void initKnowledgeBase(URI ont, URI phys){
+		SimpleURIMapper mapper = new SimpleURIMapper(ont, phys);
+		manager.addURIMapper(mapper);
+		
+		OWLOntology ontology = null;
+		
+		try {
+			ontology = manager.createOntology(ont);
+		} catch (OWLOntologyCreationException e) {
+			System.out.println("Could not create ontology!");
+			e.printStackTrace();
+		}
+		
+		OWLDataFactory factory = manager.getOWLDataFactory();
+		OWLImportsDeclaration im = factory.getOWLImportsDeclarationAxiom(ontology, URI.create(SPATIAL_LOC));
+		OWLImportsDeclaration im2 = factory.getOWLImportsDeclarationAxiom(ontology, domain_tbox.getURI());
+		AddAxiom addAxiom = new AddAxiom(ontology, im);
+		AddAxiom addAxiom2 = new AddAxiom(ontology, im2);
+		
+		try {
+			manager.applyChange(addAxiom);
+			manager.applyChange(addAxiom2);
+		} catch (OWLOntologyChangeException e) {
+			System.out.println("Could not load import into ontology!");
+			e.printStackTrace();
+		}
+		
+		knowledge = ontology;
+	}
+
+	public OWLIndividual getIndividual(URI uri) {
+		return manager.getOWLDataFactory().getOWLIndividual(uri);
+	}
+	
+	public Set<OWLIndividualAxiom> getIndividualAxioms(URI uri){
+		OWLIndividual e = manager.getOWLDataFactory().getOWLIndividual(uri);
+		return knowledge.getAxioms(e);
+		
+	}
+	
+	public SWRLRule getRuleAxiom(URI uri){
+		Set<SWRLRule> r = knowledge.getRules();
+		for (SWRLRule rule : r){
+			if (rule.getURI().compareTo(uri) == 0){
+				return rule;
+			}
+		}
+		System.out.println("Error: No rule found at " + uri.toString());
+		return null;
+	}
+
+	public OWLDataProperty getDataProperty(URI uri) {
+		return manager.getOWLDataFactory().getOWLDataProperty(uri);
+	}
+
+	public void addIndividualAxioms(Set<OWLIndividualAxiom> axioms) {
+		try {
+			for (OWLAxiom a : axioms) {
+				manager.applyChange(new AddAxiom(knowledge, a));
+			}
+		} catch (OWLOntologyChangeException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	public void addRules(Set<SWRLRule> rules) {
+		try {
+			for (SWRLRule a : rules) {
+				manager.applyChange(new AddAxiom(knowledge, a));
+			}
+		} catch (OWLOntologyChangeException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	public void printHumanReadableKnowledge() {
+		System.out.println("------------Simple Ontology Details-----------------");
+		
+		/*for(OWLClass cls: knowledge.getReferencedClasses()){
+			System.out.println(cls);
+		for(OWLDataProperty odp: knowledge.getReferencedDataProperties())
+			System.out.println("data properties "+odp);
+		for(OWLPropertyAxiom dpa: knowledge.getDataPropertyAxioms())
+			System.out.println("Data Property Axioms "+dpa);*/
+		
+		/*for(OWLObjectProperty obp: knowledge.getReferencedObjectProperties())
+			System.out.println(obp); */
+	
+		for (OWLAxiom a : knowledge.getAxioms()) {
+				
+				System.out.println("DETAILS of[ "+a+" ]");
+			   System.out.println("Type is "+ a.getAxiomType());
+			   
+			   String[] s = new String[3]; int ind=0;
+			   
+			   for (OWLEntity e : a.getReferencedEntities()){
+				 //  System.out.println("Check  "+ e);
+				   s[ind]=e.toString();
+				
+				   //System.out.println("Its entity URI is " + e.getURI());
+				 	ind++;
+				   
+			}
+			  // System.out.println("Length "+ s.length+s[0]+s[1]+s[2]);
+			   if( s[2]==null& s[0]!=null & s[1]!=null) {
+				   System.out.println(s[1]+" is a "+s[0]);
+			   }
+			   else  if( s[2]!=null& s[0]!=null & s[1]!=null) {
+				   System.out.println(s[1]+" "+s[0]+" "+s[2]);
+			   }
+			   System.out.println("-------------");	
+				
+			}
+	}
+
+	
+	public void printKnowledge() {
+		System.out.println("-----------------------------");
+				
+		for (OWLAxiom a : knowledge.getAxioms()) {
+			//System.out.println(a.toString());
+			//System.out.println(a);
+			System.out.println(" -- isA: " + a.getAxiomType().getName());
+			System.out.println(" -- Type: " + a.getAxiomType().getName());
+			for (OWLEntity e : a.getReferencedEntities()){
+				System.out.println(" -- entity: " + e.getURI().toString());
+			}
+		} 
+		
+		System.out.println("--------------------------------");	
+	}
+	
+	public void saveKnowledgeBase(){
+		try {
+			manager.saveOntology(knowledge, new RDFXMLOntologyFormat(), URI.create(PHYS_LOC_Dir + name + "_ontology.owl"));
+			System.out.println("Written to file.");
+		} catch (Exception e) {
+			System.out.println("Can't save knowledge base!");
+			e.printStackTrace();
+		}
+	}
+	
+	public Set<OWLIndividual> getIndividualsOfClass(URI concept){
+		OWLClass e = manager.getOWLDataFactory().getOWLClass(concept);
+		Set<OWLIndividual> ind_list = e.getIndividuals(knowledge);
+		return ind_list;
+	}
+	
+	
+	
+
+}

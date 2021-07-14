@@ -1,0 +1,93 @@
+package de.dfki.isreal.semantics;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+public class SendSCPGoalTab extends JPanel{
+	
+
+	static JTextArea goalDescriptionTextArea;
+	static JList vocabList;  
+	static JButton sendButton;
+
+
+	public SendSCPGoalTab() {
+	      	 
+	    	this.setLayout(new GridBagLayout());
+	    	
+	    	JPanel tmpD = new JPanel();
+		    tmpD.setLayout(new BorderLayout()); 
+		    tmpD.setBorder(BorderFactory.createTitledBorder("Goal Description"));
+		    tmpD.add(getGoalDescriptionTextArea());
+		     
+	        //addItem(p, new JLabel("Goal Description:"), 0, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 0.5,0.0);
+	        //addItem(p, getGoalDescriptionTextArea(), 0,1, 1, 1, GridBagConstraints.NORTH,GridBagConstraints.BOTH,0.5,0.5);
+	        addItem(this, tmpD, 0,1, 1, 1, GridBagConstraints.NORTH,GridBagConstraints.BOTH,0.5,0.5);
+	        
+	         JPanel tmpI = new JPanel();
+		     tmpI.setLayout(new BorderLayout());
+		     JScrollPane iScrollPane = new JScrollPane(getVocabList());
+		     iScrollPane.setBorder(BorderFactory.createTitledBorder("Vocabulary List"));
+		     tmpI.setPreferredSize(new Dimension(150, 100));
+		     tmpI.add(iScrollPane, BorderLayout.CENTER);
+		    // addItem(p, new JLabel("Instances:"), 1, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 0.0,0.0);
+		     addItem(this, tmpI, 1,0, 1, 4, GridBagConstraints.NORTH,GridBagConstraints.BOTH, 0.5, 0.5 );
+	         
+	        addItem(this, getSendButton(), 0, 4, 2, 1, GridBagConstraints.CENTER,GridBagConstraints.NONE,0.0,0.0);
+
+	    }
+	  private void addItem(JPanel p, JComponent c, int x, int y, int width, int height, int align, int fill, double weightx, double weighty) {
+	        GridBagConstraints gc = new GridBagConstraints();
+	        gc.gridx = x;
+	        gc.gridy = y;
+	        gc.gridwidth = width;
+	        gc.gridheight = height;
+	        gc.weightx = weightx;
+	        gc.weighty = weighty;
+	        gc.insets = new Insets(5, 5, 5, 5);
+	        gc.anchor = align;
+	        gc.fill = fill;
+	        p.add(c, gc);
+	      }
+	    private static JButton getSendButton(){
+	    	sendButton=new JButton("Send");
+	  		   return sendButton;
+	  	   }
+	    private static JTextArea getGoalDescriptionTextArea(){
+	    	goalDescriptionTextArea=new javax.swing.JTextArea(10,20);
+			   return goalDescriptionTextArea;
+		   }
+	    
+	    private static JList getVocabList(){
+	    	
+	    	  vocabList = new JList(new String[] { "uridfdfdf1", "uri2","uri3", "uri4","uri5"});
+			   return vocabList;
+		   } 
+	    public static void main(String[] args) {
+	    	   JFrame f = new JFrame("Send SCP Goal");
+			   f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    		JPanel p=new SendSCPGoalTab ();
+	    		f.getContentPane().add(p);
+	    		f.pack();
+	    	   	   //f.setSize(600, 200);
+	    	   	f.setVisible(true);
+	    	    }
+	
+}

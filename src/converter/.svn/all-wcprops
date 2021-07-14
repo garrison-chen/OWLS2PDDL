@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/IsReal/!svn/ver/2179/branches/SAB2012_VISCenter_config_zungenwurst/de.dfki.isreal.planner/src/main/java/converter
+END
+Composition_Planner.java
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/svn/IsReal/!svn/ver/2179/branches/SAB2012_VISCenter_config_zungenwurst/de.dfki.isreal.planner/src/main/java/converter/Composition_Planner.java
+END
+ServiceReader.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/IsReal/!svn/ver/2179/branches/SAB2012_VISCenter_config_zungenwurst/de.dfki.isreal.planner/src/main/java/converter/ServiceReader.java
+END
+DomainFileWriter.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/IsReal/!svn/ver/2179/branches/SAB2012_VISCenter_config_zungenwurst/de.dfki.isreal.planner/src/main/java/converter/DomainFileWriter.java
+END
+OWLS2PDDXML_Converter.java
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/svn/IsReal/!svn/ver/2179/branches/SAB2012_VISCenter_config_zungenwurst/de.dfki.isreal.planner/src/main/java/converter/OWLS2PDDXML_Converter.java
+END
+FileConverter.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/IsReal/!svn/ver/2179/branches/SAB2012_VISCenter_config_zungenwurst/de.dfki.isreal.planner/src/main/java/converter/FileConverter.java
+END
+ServiceExecutionFileReader.java
+K 25
+svn:wc:ra_dav:version-url
+V 150
+/svn/IsReal/!svn/ver/2179/branches/SAB2012_VISCenter_config_zungenwurst/de.dfki.isreal.planner/src/main/java/converter/ServiceExecutionFileReader.java
+END
+DomainFileReader.java
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/svn/IsReal/!svn/ver/2179/branches/SAB2012_VISCenter_config_zungenwurst/de.dfki.isreal.planner/src/main/java/converter/DomainFileReader.java
+END
+PrecondEffectReader.java
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/svn/IsReal/!svn/ver/2179/branches/SAB2012_VISCenter_config_zungenwurst/de.dfki.isreal.planner/src/main/java/converter/PrecondEffectReader.java
+END
+Pddxml2pddl4j.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/IsReal/!svn/ver/2179/branches/SAB2012_VISCenter_config_zungenwurst/de.dfki.isreal.planner/src/main/java/converter/Pddxml2pddl4j.java
+END
+ProblemFileWriter.java
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/svn/IsReal/!svn/ver/2179/branches/SAB2012_VISCenter_config_zungenwurst/de.dfki.isreal.planner/src/main/java/converter/ProblemFileWriter.java
+END

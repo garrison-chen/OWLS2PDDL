@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <uri id="Imports Wizard Entry" name="http://www.dfki.de/isreal/abstract_concepts.owl" uri="http://dfki.de/isreal/abstract_concepts.owl"/>
+    <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
+        <uri id="Automatically generated entry, Timestamp=1353491516885" name="duplicate:http://www.dfki.de/isreal/init.owl" uri="goal.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1353491516885" name="duplicate:http://www.dfki.de/isreal/init.owl" uri="init.owl"/>
+    </group>
+</catalog>

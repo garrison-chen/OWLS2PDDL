@@ -1,0 +1,91 @@
+package de.dfki.isreal.semantics;
+import java.io.*;
+
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParserFactory; 
+import javax.xml.parsers.SAXParser;
+
+
+public class Test_BookLibrary extends DefaultHandler{
+	
+	public void startDocument () throws SAXException
+	{
+		System.out.println("start document");
+	}
+
+	/*
+	 *Called when the Parser Completes parsing the Current XML File.
+	*/
+	public void endDocument () throws SAXException
+	{
+		System.out.println("end document");
+	}
+
+	/*
+	 * Called when the starting of the Element is reached. For Example if we have Tag
+	 * called <Title> ... </Title>, then this method is called when <Title> tag is
+	 * Encountered while parsing the Current XML File. The AttributeList Parameter has
+	 * the list of all Attributes declared for the Current Element in the XML File.
+	*/
+	/*public void startElement (String name, Attributes attrs) throws SAXException
+	{
+		System.out.println("start Element "+name);
+	}*/
+	public void startElement(String uri, String localName, String qName, Attributes attributes)  throws SAXException{
+		System.out.println("start Element "+qName);
+	}
+	/*
+	 * Called when the Ending of the current Element is reached. For example in the
+	 * above explanation, this method is called when </Title> tag is reached
+	*/
+	public void endElement (String uri, String localName,  String qName) throws SAXException
+	{
+		System.out.println("start Element "+qName);
+	}
+
+	/*
+	 * While Parsing the XML file, if extra characters like space or enter Character
+	 * are encountered then this method is called. If you don't want to do anything
+	 * special with these characters, then you can normally leave this method blank.
+	*/
+	public void characters (char[] ch, int start, int length) throws SAXException
+	{
+		System.out.println("Characters "+length);
+	}
+
+	/*
+	 * In the XML File if the parser encounters a Processing Instruction which is
+	 * declared like this  <?ProgramName:BooksLib QUERY="author, isbn, price"?> 
+	 * Then this method is called where Target parameter will have
+	 * "ProgramName:BooksLib" and data parameter will have  QUERY="author, isbn,
+	 *  price". You can invoke a External Program from this Method if required. 
+	*/
+	public void processingInstruction (String target, String data) throws SAXException
+	{
+
+	}
+
+
+public static void main(String [] args)
+{
+	Test_BookLibrary  t=new Test_BookLibrary();
+
+  SAXParserFactory factory = SAXParserFactory.newInstance();
+  try {
+
+        //OutputStreamWriter out = new OutputStreamWriter (System.out, "UTF8");
+        SAXParser saxParser = factory.newSAXParser();
+        saxParser.parse("mine.xml", t );
+        
+  } catch (Throwable err) {
+        err.printStackTrace ();
+  }
+  
+
+  
+}
+}

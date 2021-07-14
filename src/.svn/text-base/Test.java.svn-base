@@ -1,0 +1,39 @@
+package de.dfki.isreal.semantics;
+
+
+
+import org.mindswap.owl.OWLKnowledgeBase;
+import org.mindswap.owl.OWLOntology;
+import org.mindswap.owl.OWLFactory;
+import org.mindswap.owls.service.Service;
+
+import java.io.FileNotFoundException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+
+public class Test {
+	
+    public static void main(String[] args) throws FileNotFoundException {
+    	URI ur = null;
+		try {
+			ur = new URI("http://www.mindswap.org/2004/owl-s/0.9/ZipCodeFinder.owl");
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	    // create a KB  
+    	    OWLKnowledgeBase kb = OWLFactory.createKB();
+
+    	    // create a generic reader and a 1.0 writer
+    	    OWLOntology ont = kb.read(ur);
+    	    
+    	    // get the service
+    	    Service service = ont.getService();
+    	    
+    	    // write the output to console (a file stream can also be used here)
+    	    ont.write(System.out);
+    	    System.out.println("AHAaaaaaa");
+    }
+
+}

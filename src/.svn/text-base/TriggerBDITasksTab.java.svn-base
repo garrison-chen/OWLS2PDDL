@@ -1,0 +1,158 @@
+package de.dfki.isreal.semantics;
+
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+public class TriggerBDITasksTab extends JPanel{
+	 
+	static JList taskList; 
+	static JList vocabList; 
+	static JTextArea serviceDescriptionTextArea;
+	static JTable inputsTable;
+	static JButton sendButton;
+
+    
+	TriggerBDITasksTab() {
+		this.setLayout(new GridBagLayout());
+		
+		 JPanel tmpT = new JPanel();
+	     tmpT.setLayout(new BorderLayout());
+	     JScrollPane sScrollPane = new JScrollPane(getTaskList());
+	     sScrollPane.setBorder(BorderFactory.createTitledBorder("Task List"));
+	     tmpT.setPreferredSize(new Dimension(120, 150));
+	     tmpT.add(sScrollPane, BorderLayout.CENTER);
+	     addItem(this, tmpT, 0,0, 1, 1, GridBagConstraints.NORTH,GridBagConstraints.BOTH, 0.5, 0.5 );
+	     
+	     JPanel tmpV = new JPanel();
+	     tmpV.setLayout(new BorderLayout());
+	     JScrollPane iScrollPane = new JScrollPane(getVocabList());
+	     iScrollPane.setBorder(BorderFactory.createTitledBorder("Vocabulary List"));
+	     tmpV.setPreferredSize(new Dimension(150, 100));
+	     tmpV.add(iScrollPane, BorderLayout.CENTER);
+	    // addItem(p, new JLabel("Instances:"), 1, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 0.0,0.0);
+	     addItem(this, tmpV, 1,0, 1, 6, GridBagConstraints.NORTH,GridBagConstraints.BOTH, 0.5, 0.5 );
+	
+	     JPanel tmpD = new JPanel();
+	     tmpD.setLayout(new BorderLayout()); 
+	     tmpD.setBorder(BorderFactory.createTitledBorder("Service Description"));
+	     tmpD.add(getServiceDescriptionTextArea());
+	     
+	     //addItem(p, new JLabel("Service Description:"), 0, 2, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 0.0, 0.0);
+	     //addItem(p, getServiceDescriptionTextArea(), 0,3, 1, 1, GridBagConstraints.NORTH,GridBagConstraints.BOTH, 0.5, 0.5 );
+	     addItem(this, tmpD, 0,3, 1, 1, GridBagConstraints.NORTH,GridBagConstraints.BOTH, 0.5, 0.5 );
+		  
+	     JPanel tmpIn = new JPanel();
+	     tmpIn.setLayout(new BorderLayout()); 
+	     tmpIn.setBorder(BorderFactory.createTitledBorder("Inputs"));
+	     tmpIn.add(getInputsTable());
+	     
+	     //addItem(p, new JLabel("Inputs:"), 0, 4, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 0.0, 0.0);
+	     //addItem(p, getInputsTable(), 0,5, 1, 1, GridBagConstraints.NORTH,GridBagConstraints.BOTH,0.5,0.5 );
+	     addItem(this, tmpIn, 0,5, 1, 1, GridBagConstraints.NORTH,GridBagConstraints.BOTH,0.5,0.5 );
+	     
+	    addItem(this, getSendButton(), 0, 6, 2, 1, GridBagConstraints.CENTER,GridBagConstraints.NONE, 0.0,0.0);
+		
+		/* addItem(p, new JLabel("Task List:"), 0, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL);
+	     addItem(p, getTaskList(), 0,1, 1, 1, GridBagConstraints.EAST,GridBagConstraints.HORIZONTAL);
+	     
+	     addItem(p, new JLabel("Vocabulary List:"), 1, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL);
+	     addItem(p, getVocabList(), 1,1, 1, 1, GridBagConstraints.EAST,GridBagConstraints.HORIZONTAL);
+	     */
+		
+	     /*addItem(p, new JLabel("Service Description:"), 0, 2, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL);
+	     addItem(p, getServiceDescriptionTextArea(), 0,3, 1, 1, GridBagConstraints.EAST,GridBagConstraints.HORIZONTAL);
+	     
+	     addItem(p, new JLabel("Inputs:"), 0, 4, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL);
+	     addItem(p, getInputsTable(), 0,5, 1, 1, GridBagConstraints.EAST,GridBagConstraints.HORIZONTAL);
+ */
+	     //addItem(p, new JScrollPane(getInputsTable()), 0,3, 1, 1, GridBagConstraints.EAST,GridBagConstraints.HORIZONTAL);
+	     //JScrollPane scrollPane = new JScrollPane( getInputsTable() );
+ 		 //f.getContentPane().add( scrollPane );
+ 		
+	   // addItem(p, getExecuteButton(), 0, 6, 1, 1, GridBagConstraints.CENTER,GridBagConstraints.NONE);
+
+	}
+	
+	 private void addItem(JPanel p, JComponent c, int x, int y, int width, int height, int align, int fill, double weightx, double weighty) {
+	        GridBagConstraints gc = new GridBagConstraints();
+	        gc.gridx = x;
+	        gc.gridy = y;
+	        gc.gridwidth = width;
+	        gc.gridheight = height;
+	        gc.weightx = weightx;
+	        gc.weighty = weighty;
+	        gc.insets = new Insets(5, 5, 5, 5);
+	        gc.anchor = align;
+	        gc.fill = fill;
+	        p.add(c, gc);
+	      }
+	    private static JButton getSendButton(){
+	    	sendButton=new JButton("Send");
+	  		   return sendButton;
+	  	   }
+	    private static JTextArea getServiceDescriptionTextArea(){
+	    	serviceDescriptionTextArea=new javax.swing.JTextArea(10,20);
+			   return serviceDescriptionTextArea;
+		   }
+	    
+	    private static JList getTaskList(){	    	
+	    	  taskList = new JList(new String[] { "Task1", "Task2","Task3", "Task4","Task5","Task3", "Task4","Task5"});
+			   return taskList;
+		   } 
+	    
+	    private static JList getVocabList(){	    	
+	    	  vocabList = new JList(new String[] { "uri1", "uri2","uri3", "uri4","uri5", "uri2","uri3", "uri4","uri5", "uri2","uri3", "uri4","uri5", "uri2","uri3", "uri4","uri5", "uri2","uri3", "uri4","uri5", "uri2","uri3", "uri4","uri5"});
+			   return vocabList;
+		   } 
+	    
+	    private static JTable getInputsTable(){	    	
+	    	  inputsTable = new JTable();
+	    	  inputsTable.setModel(getTableModel());
+	    	// inputsTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+	    		
+			   return inputsTable;
+		   } 
+	    
+	    private static TableModel getTableModel(){	 
+	    	String[] columnNames = {"Inputs", "Uris"}; 
+	    	String[][] data = { {"input 1", "http://A"}, {"input 2", "http://B"}, {"input 3", "http://C"} };
+	    	DefaultTableModel model = new DefaultTableModel(data,columnNames);
+	    	
+	    	//String[] names={"1","http://"};
+	    	//model.addRow(names);
+	    	String[] test = {"input 4", "http://jhsjhf"};
+	    	model.addRow(test);
+	    	return model;
+		   } 
+	    
+	    
+	    
+	    
+	public static void main(String[] args) {
+		   JFrame f = new JFrame("Trigger BDI Tasks");
+		   f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		   JPanel p=new TriggerBDITasksTab ();
+		   f.getContentPane().add(p);
+		   f.pack();
+	   	   //f.setSize(600, 200);
+	   	   f.setVisible(true);
+  	    }
+}
+

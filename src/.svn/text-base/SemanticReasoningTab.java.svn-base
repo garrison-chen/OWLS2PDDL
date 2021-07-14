@@ -1,0 +1,211 @@
+package de.dfki.isreal.semantics;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+
+public class SemanticReasoningTab extends JPanel{
+	
+	static JTextField expr1TextField;
+	static JTextArea resultTextArea;
+	static JTextField expr2TextField;
+	static JList vocabList;  	
+    static JButton sendButton;
+   
+    static JRadioButton checkEquivalenceButton;
+    static JRadioButton checkKBConsistencyButton;
+    static JRadioButton checkClassConsistencyButton; 
+    static JRadioButton checkClassSubsumptionButton; 
+    static JRadioButton checkClassDisjunctionButton;
+    static JRadioButton instanceCheckingButton; 
+ 
+    public SemanticReasoningTab() {
+      
+    	 
+    	this.setLayout(new GridBagLayout());
+    	
+    	JPanel tmpE = new JPanel();
+    	tmpE.setLayout(new GridBagLayout());
+    	
+    	addItem(tmpE, new JLabel("Expression1:"), 0, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE, 0.0, 0.0);
+    	addItem(tmpE, getExpr1TextField(), 1, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 1.0, 0.0);
+    	   
+    	addItem(tmpE, new JLabel("Expression2:"), 0, 1, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE, 0.0, 0.0);     
+        addItem(tmpE, getExpr2TextField(), 1, 1, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 1.0, 0.0);
+        
+        addItem(this, tmpE, 0,0,2,1, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, 1.0, 0.0);
+       
+      
+        ButtonGroup qTaskGroup = new ButtonGroup();
+        qTaskGroup.add(getEquivalenceButton());
+        qTaskGroup.add(getKBConsistencyButton());
+        qTaskGroup.add(getClassConsistencyButton());
+        qTaskGroup.add(getClassDisjunctionButton());
+        qTaskGroup.add(getClassSubsumptionButton());
+        qTaskGroup.add(getInstanceCheckingButton());
+        
+        Box taskBox = Box.createVerticalBox();
+        taskBox.add(getEquivalenceButton());
+        taskBox.add(getKBConsistencyButton());
+        taskBox.add(getClassConsistencyButton());
+        taskBox.add(getClassDisjunctionButton());
+        taskBox.add(getClassSubsumptionButton());
+        taskBox.add(getInstanceCheckingButton());
+        
+        taskBox.setBorder(BorderFactory.createTitledBorder("Query Tasks"));
+        addItem(this, taskBox, 0, 2, 1, 1, GridBagConstraints.CENTER,GridBagConstraints.BOTH, 0.5, 0.5);
+        
+        //JPanel tmpVT = new JPanel();
+        //tmpVT.setLayout(new GridBagLayout());
+        
+        JPanel tmpV = new JPanel();
+        tmpV.setLayout(new BorderLayout());        
+        JScrollPane vScrollPane = new JScrollPane(getVocabList());
+	    tmpV.setPreferredSize(new Dimension(190, 40)); 
+	    vScrollPane.setBorder(BorderFactory.createTitledBorder("Vocabulary List"));
+	    tmpV.add(vScrollPane, BorderLayout.CENTER);
+        
+        /*addItem(tmpVT, new JLabel("Vocabulary List:"), 0, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 1.0, 0.0);
+        addItem(tmpVT, tmpV, 0, 1, 1, 1, GridBagConstraints.NORTH,GridBagConstraints.BOTH, 1.0, 1.0);
+	    addItem(p, tmpVT, 1,2,1,1, GridBagConstraints.NORTH, GridBagConstraints.BOTH, 0.5, 0.5); */
+	    
+        /*addItem(p, new JLabel("Vocabulary List:"), 0, 0, 1, 1, GridBagConstraints.WEST,GridBagConstraints.BOTH, 1.0, 1.0);
+        addItem(tmpV, new JScrollPane(getVocabList()), 0, 1, 1, 1, GridBagConstraints.CENTER,GridBagConstraints.BOTH, 1.0, 1.0);
+        */
+	    addItem(this, tmpV, 1,2,1,1, GridBagConstraints.NORTH, GridBagConstraints.BOTH, 0.5, 0.5);
+	      
+
+        JPanel tmpR = new JPanel();
+        tmpR.setLayout(new BorderLayout()); 
+        tmpR.setBorder(BorderFactory.createTitledBorder("Result"));
+        tmpR.add(getResultTextArea());
+        addItem(this, tmpR, 0,3,2,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, 0.5, 0.5);
+        
+        addItem(this, getSendButton(), 0, 6, 2, 1, GridBagConstraints.CENTER,GridBagConstraints.NONE, 0.0, 0.0); 
+
+
+    }
+  
+	
+    private void addItem(JPanel p1, JComponent c, int x, int y, int width, int height, int align, int fill, double weightx, double weighty) {
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = x;
+        gc.gridy = y;
+        gc.gridwidth = width;
+        gc.gridheight = height;
+        gc.weightx = weightx;//100.0;
+        gc.weighty = weighty;//100.0;
+        gc.insets = new Insets(5, 5, 5, 5);
+        gc.anchor = align;
+        gc.fill = fill;
+        p1.add(c, gc);
+      }
+    private static JButton getSendButton(){
+    	sendButton=new JButton("Send");
+  		   return sendButton;
+  	   }
+    
+    private static JTextField getExpr1TextField(){
+    	expr1TextField=new  javax.swing.JTextField(20);
+  		   return expr1TextField;
+  		
+  	   }
+    private static JTextField getExpr2TextField(){
+    	expr2TextField=new  javax.swing.JTextField(20);
+		   return expr2TextField;
+	   }
+    private static JTextArea getResultTextArea(){
+    	resultTextArea=new javax.swing.JTextArea(10,25);
+		   return resultTextArea;
+	   }
+    
+    private static JList getVocabList(){
+    	
+    	  vocabList = new JList(new String[] { "uridfdfdf1", "uri2","uri3", "uri4", "uri2","uri3", "uri4" , "uri2","uri3", "uri4"  });
+		   return vocabList;
+	   } 
+    
+    private static JRadioButton getEquivalenceButton(){
+    	checkEquivalenceButton= new JRadioButton("checkClassEquivalent()"); 
+    	  checkEquivalenceButton.setSelected(true);
+		   return checkEquivalenceButton;
+	   }
+
+    private static JRadioButton getKBConsistencyButton(){
+    	checkKBConsistencyButton=new JRadioButton("checkKBConsistency()");  
+		   return checkKBConsistencyButton;
+	   }
+    
+
+    private static JRadioButton getClassConsistencyButton(){
+    	checkClassConsistencyButton= new JRadioButton("checkClassConsistency()"); 
+    	 return checkClassConsistencyButton;
+	   }
+    private static JRadioButton getClassDisjunctionButton(){
+    	checkClassDisjunctionButton = new JRadioButton("checkClassDisjunction()"); 
+    	 return checkClassDisjunctionButton;
+	   }
+    
+    private static JRadioButton getClassSubsumptionButton(){
+    	checkClassSubsumptionButton= new JRadioButton("checkClassSubsumption()"); 
+    	 return checkClassSubsumptionButton;
+	   }
+    private static JRadioButton getInstanceCheckingButton(){
+    	instanceCheckingButton= new JRadioButton("instanceChecking()");
+    	 return instanceCheckingButton;
+	   }
+    
+
+  /*  static void setActionListerner(){
+
+    	WindowListener wndCloser = new WindowAdapter() {
+    		public void windowClosing(WindowEvent e) {
+    			System.exit(0);
+    		}
+    	};
+    	f.addWindowListener(wndCloser);  
+
+    	sendButton.addActionListener(new java.awt.event.ActionListener() {
+   			public void actionPerformed(java.awt.event.ActionEvent evt) {
+   					System.out.println("Expression1 Recieved: "+expr1TextField.getText());
+   																		}
+																	}
+										);
+      } */
+
+public static void main(String[] args) {
+
+	   JFrame f = new JFrame("Sematic Reasoning");
+	   f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	   JPanel p=new SemanticReasoningTab();
+	   f.getContentPane().add(p);
+	   f.pack();
+	   //f.setSize(600, 200);
+	   f.setVisible(true);
+    }
+}

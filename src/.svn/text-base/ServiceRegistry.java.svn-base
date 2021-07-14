@@ -1,0 +1,43 @@
+package de.dfki.isreal.semantics;
+
+import java.io.File;
+import java.net.URI;
+import java.util.List;
+
+import org.mindswap.owls.service.Service;
+
+public interface ServiceRegistry {
+	/*
+	 * store a service uri in the semantic environment.
+	 */
+	public void addService(String uri);
+	
+	/*
+	 * remove a service from the registry
+	 */
+	public void removeService(String uri);
+	
+	/*
+	 * print to std out.
+	 */
+	public void printServices();
+	
+	/*
+	 * returns a list of URI.
+	 */
+	public List<URI> getServices();
+	
+	/*
+	 * returns the file of the service with the given uri.
+	 */
+	public Service getService(String uri);
+	
+	public Service getServiceFromActionName(String name);
+	
+	/*
+	 * get a service in the registry and checks if it is valid.
+	 */
+	public boolean isValidService(String uri);
+	
+}
+

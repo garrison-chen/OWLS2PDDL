@@ -1,0 +1,37 @@
+package de.dfki.isreal.semantics;
+
+
+import java.net.URI;
+
+public interface SemanticReasonerPlugin //extends Maintenance { 
+{
+	// tbox + abox consistency check 
+	public boolean checkKBConsistency();
+	
+	// TBox reasoning. If a class cannot have any instances then it is inconsistent(concept satisfiability)
+	// check if a class is subclass of Nothing/ not a subclass of Thing
+	public boolean checkClassConsistency(URI c);	
+	
+	//is c1 subclass of c2?
+	public boolean checkClassSubsumption(URI c1, URI c2);
+	
+	public boolean checkClassEquivalence(URI c1, URI c2);
+	
+	public boolean checkClassDisjunction(URI c1, URI c2);
+	
+	public boolean instanceChecking( URI ind_uri, URI clas_uri);
+	
+	//public String answerConjunctiveQuery(URI ont_uri, Query q);
+	
+	public void classify();
+	
+	public void realize();
+	//?? difference between reasoner.realise() and reasoner.getkb().realize()/kb.realize()
+	//? also difference between KnowledgeBase isconsistent(), realize() and classify() and reasoner's
+	//? classifier can be an IncreamentalClassifier or kb.classify() or reasoner.classify()
+	//? which one should i use? PelletAPI, OWLAPI, or Jena stuff
+	//? Had to add all pellet's jar files for examples, shud i do same for this implementation 
+
+	public void createReasoner(URI uri);
+}
+

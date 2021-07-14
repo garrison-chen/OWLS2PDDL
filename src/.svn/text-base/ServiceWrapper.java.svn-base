@@ -1,0 +1,45 @@
+package de.dfki.isreal.semantics;
+
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+public interface ServiceWrapper extends Serializable{
+	/*
+	 * Returns the human readable description of the Service as a String.
+	 */
+	public String getDescription();
+	
+	/*
+	 * Returns the input parameter URIs of the service as list.
+	 */
+	public List<String> getInputs();
+	
+	/*
+	 * Returns the output parameter URIs of the service as list.
+	 */
+	public List<String> getOutputs();
+	
+	/*
+	 * Returns the local parameter URIs of the service as list.
+	 */
+	public List<String> getLocals();
+	
+	/*
+	 * Returns a String for every expression of the precondition of the service.
+	 * We Assume this to be in PDDXML syntax.
+	 */
+	public List<String> getPreconditionExpression();
+	
+	/*
+	 * Return all (Conditional) Effects constructs of the service.
+	 */
+	//public List<CondEffect> getConditionalEffects();
+	public List<List<String>> getEffects();
+	
+	/*
+	 * Validate the service
+	 */
+	public boolean isValid();
+
+}

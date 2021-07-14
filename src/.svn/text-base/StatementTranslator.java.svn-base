@@ -1,0 +1,71 @@
+package de.dfki.isreal.semantics;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import com.sun.org.apache.xerces.internal.parsers.SAXParser;
+
+public class StatementTranslator {
+
+	//ArrayList<String> statement=new ArrayList<String>();
+	HashMap<ArrayList<String>,String> map = null;
+	
+	public static void main(String[] args) {
+		
+	StatementTranslator nQT=new StatementTranslator("set.xml");
+	//StatementTranslator nQT=new StatementTranslator();
+	ArrayList<String> stat=new ArrayList<String>();
+	stat.add("pill01"); stat.add("hasColor"); 	stat.add("blue");
+	//nQT.addStatement();
+	System.out.println("NL: "+nQT.getNLfromStatement(stat));
+	}
+	public StatementTranslator()
+	{
+		 map = new HashMap<ArrayList<String>,String>() ;
+	}
+	public StatementTranslator(String filename)
+	{
+		 map = new HashMap<ArrayList<String>,String>() ;
+		 HashMap<String, String> temp=new HashMap<String,String>(); 
+		 ParseSetsXml t = new ParseSetsXml();
+		    SAXParser p = new SAXParser();
+		   
+		   p.setContentHandler(t);
+		    try {
+	      	  p.parse(filename); 
+	      	  temp=t.returnMap();
+	      	  
+	      	  for (Iterator i = temp.keySet().iterator(); i.hasNext();) 
+			   {
+	      	
+				ArrayList<String> key = (ArrayList<String>)i.next();
+				//System.out.println("key"+key+temp.get(key));
+				map.put(key, temp.get(key));	
+			   }
+		    } 
+		    catch (Exception e) { e.printStackTrace(); }
+	}
+	
+	public void addStatement(ArrayList<String> statement, String s) {
+		map.put(statement,s);
+	}
+	
+	public String getNLfromStatement(ArrayList<String> statement) {
+		
+		String s="Statement not found";
+		
+		for (Iterator i = map.keySet().iterator(); i.hasNext();) 
+		{
+			ArrayList<String> key = (ArrayList<String>)i.next();
+			//checking all one by one coz containsAll does care about the matching order
+		 if (key.get(0).equals(statement.get(0)) && key.get(1).equals(statement.get(1)) && key.get(2).equals(statement.get(2))) 
+			{
+			 
+				s=map.get(key);		
+				
+			}
+		}
+			return s;	
+	}
+}

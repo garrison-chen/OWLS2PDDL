@@ -1,0 +1,184 @@
+package de.dfki.isreal.semantics;
+
+
+import java.io.FileNotFoundException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.mindswap.owl.OWLDataValue;
+import org.mindswap.owl.OWLFactory;
+import org.mindswap.owl.OWLKnowledgeBase;
+import org.mindswap.owls.process.Process;
+import org.mindswap.owls.service.Service;
+import org.semanticweb.owl.model.OWLDataProperty;
+//import org.semanticweb.owl.model.OWLDataValue;
+import org.semanticweb.owl.model.OWLConstant;
+import org.semanticweb.owl.model.OWLDataPropertyExpression;
+import org.semanticweb.owl.model.OWLException;
+import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owl.model.OWLObjectProperty;
+import org.semanticweb.owl.model.OWLObjectPropertyExpression;
+import org.semanticweb.owl.model.OWLOntology;
+import org.semanticweb.owl.model.OWLOntologyCreationException;
+import org.semanticweb.owl.model.OWLProperty;
+//import org.semanticweb.owl.util.OWLManager;
+import org.semanticweb.owl.apibinding.OWLManager; 
+
+
+public class OWLUtil
+{
+    public static final URI OWL_S_PROCESS = URI.create("http://www.daml.org/services/owl-s/1.1/Process.owl#");    
+    public static final URI OWL_S_PROCESS_HAS_PRECONDITION = URI.create(OWL_S_PROCESS + "hasPrecondition");    
+    public static final URI OWL_S_PROCESS_HAS_RESULT = URI.create(OWL_S_PROCESS + "hasResult");    
+    public static final URI OWL_S_PROCESS_HAS_EFFECT = URI.create(OWL_S_PROCESS + "hasEffect");    
+    
+    public static final URI OWL_S_EXPRESSION = URI.create("http://www.daml.org/services/owl-s/1.1/generic/Expression.owl#");    
+    public static final URI OWL_S_EXPRESSION_EXPRESSION_BODY = URI.create(OWL_S_EXPRESSION + "expressionBody");    
+    static OWLOntology ont=null;
+    /*OWLUtil()
+    {
+        super();
+        // TODO Auto-generated constructor stub
+    }*/
+
+    public static void main() throws URISyntaxException, OWLException {
+    	URI aURI = null;
+    	aURI = new URI("http://127.0.0.1/isreal/flip_slider.owl");
+    	OWLKnowledgeBase aKB = OWLFactory.createKB();
+
+		aKB.setReasoner("RDFS");
+		Service service = null;
+		try {
+			service = aKB.readService(aURI);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("service name: " + service.getLocalName());
+		Process process = service.getProcess();
+		System.out.println("process name: " + process.getLocalName());
+		OWLUtil ou=new OWLUtil();
+		Set<OWLIndividual> oi=OWLUtil.getPreconditions(process);
+		System.out.println("precondition name: " +oi.size());
+		for(OWLIndividual o:oi)
+		{
+			System.out.println("Prconditions: "+o.toString());
+		}
+    }
+    /**
+     * @param individual
+     * @param propertyURI
+     * @return OWLProperty object for the property specified by <code>propertyURI</code>, or null if
+     *         <code>individual</code> does not have this property.
+     */
+
+    public static OWLObjectProperty findObjectProperty(OWLIndividual individual, URI propertyURI) throws OWLException
+    { 
+        Map<OWLObjectPropertyExpression, Set<OWLIndividual>> propertyMap = individual.getObjectPropertyValues(ont);
+        System.out.println("object prri"+ propertyMap.keySet());
+        if(propertyMap != null)
+        {
+            for (OWLObjectPropertyExpression property : propertyMap.keySet())
+            {
+                if (property.asOWLObjectProperty().getURI().equals(propertyURI)) return property.asOWLObjectProperty();
+            }
+        }
+        return null;
+    }
+    
+    public static OWLDataProperty findDataProperty(OWLIndividual individual, URI propertyURI) throws OWLException
+    {
+        
+    	 Map<OWLDataPropertyExpression, Set<OWLConstant>> propertyMap= individual.getDataPropertyValues(ont);
+        if(propertyMap != null)
+        {
+            for (OWLDataPropertyExpression property : propertyMap.keySet())
+            {
+                if (property.asOWLDataProperty().equals(propertyURI)) return property.asOWLDataProperty();
+            }
+        }
+        return null;
+    }
+    
+    public static Set<OWLIndividual> getObjectProperties(OWLIndividual individual, URI objectPropertyURI) throws OWLException
+    {
+            OWLObjectProperty property = findObjectProperty(individual, objectPropertyURI);
+            Set<OWLIndividual> values = (Set<OWLIndividual>)individual.getObjectPropertyValues(ont).get(property);
+            if(values != null) return values;
+            return new HashSet<OWLIndividual>();
+    }
+    
+    public static OWLIndividual getObjectProperty(OWLIndividual individual, URI objectPropertyURI) throws OWLException
+    {
+        Set<OWLIndividual> values = getObjectProperties(individual, objectPropertyURI);
+        if(values.size() >= 1) return values.iterator().next();
+        return null;
+    }
+    
+    public static Set<OWLConstant> getDataProperties(OWLIndividual individual, URI dataPropertyURI) throws OWLException
+    {
+            OWLDataProperty property = findDataProperty(individual, dataPropertyURI);
+            return (Set<OWLConstant>)individual.getDataPropertyValues(ont).get(property);
+    }
+    
+    public static OWLConstant getDataProperty(OWLIndividual individual, URI dataPropertyURI) throws OWLException 
+    {
+            return getDataProperties(individual, dataPropertyURI).iterator().next();
+    }
+    
+
+    public static Set<OWLIndividual> getPreconditions(Process process) throws OWLException
+    {
+        //OWLOntology 
+        ont = OWLManager.createOWLOntologyManager().loadOntologyFromPhysicalURI(process.getURI());
+        OWLIndividual processI=null;
+        while(ont.getReferencedIndividuals().iterator().hasNext())
+        {
+        if(ont.getReferencedIndividuals().iterator().next().getURI().equals(process.getURI()) )
+        		processI=ont.getReferencedIndividuals().iterator().next().asOWLIndividual();
+        
+        }
+        System.out.println("aaaaaa");
+        return getObjectProperties(processI, OWL_S_PROCESS_HAS_PRECONDITION);
+    }
+    
+    public static Set<OWLIndividual> getResults(Process process) throws OWLException
+    {
+    	//OWLOntology 
+    	ont = OWLManager.createOWLOntologyManager().loadOntologyFromPhysicalURI(process.getURI());
+        OWLIndividual processI=null;
+        while(ont.getReferencedIndividuals().iterator().hasNext())
+        {
+        if(ont.getReferencedIndividuals().iterator().next().getURI().equals(process.getURI()) )
+        		processI=ont.getReferencedIndividuals().iterator().next().asOWLIndividual();
+        }
+        return getObjectProperties(processI, OWL_S_PROCESS_HAS_RESULT);
+    }
+
+    public static OWLIndividual getResult(Process process) throws OWLException
+    {
+        //OWLOntology 
+        ont = OWLManager.createOWLOntologyManager().loadOntologyFromPhysicalURI(process.getURI());
+        OWLIndividual processI=null;
+        while(ont.getReferencedIndividuals().iterator().hasNext())
+        {
+        if(ont.getReferencedIndividuals().iterator().next().getURI().equals(process.getURI()) )
+        		processI=ont.getReferencedIndividuals().iterator().next().asOWLIndividual();
+        }
+        return getObjectProperty(processI, OWL_S_PROCESS_HAS_RESULT);
+    }
+
+    public static Set<OWLIndividual> getEffects(OWLIndividual result) throws OWLException
+    {
+        return getObjectProperties(result, OWL_S_PROCESS_HAS_EFFECT);
+    }
+    
+    public static OWLConstant getExpressionBody(OWLIndividual expression) throws OWLException
+    {
+        return getDataProperty(expression, OWL_S_EXPRESSION_EXPRESSION_BODY);
+    }
+
+}

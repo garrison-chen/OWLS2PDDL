@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0
+END
+build.xml
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/mymedia/!svn/ver/322/trunk/de.dfki.owls2pddxml_2_0/build.xml
+END
+.project
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/.project
+END
+.classpath
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/mymedia/!svn/ver/35/trunk/de.dfki.owls2pddxml_2_0/.classpath
+END

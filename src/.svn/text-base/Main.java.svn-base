@@ -1,0 +1,439 @@
+/**
+ *
+ * @date 26.05.2009
+ * @author Stefan Nesbigall
+ */
+package de.dfki.isreal.semantics;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.xml.parsers.SAXParserFactory;
+
+import org.mindswap.owl.OWLFactory;
+import org.mindswap.owl.OWLKnowledgeBase;
+import org.mindswap.owl.OWLOntology;
+import org.mindswap.owls.process.ConditionList;
+import org.mindswap.owls.process.Process;
+import org.mindswap.owls.service.Service;
+import org.semanticweb.owl.model.OWLException;
+import org.semanticweb.owl.model.OWLIndividual;
+import org.semanticweb.owl.model.OWLOntologyCreationException;
+import org.semanticweb.owl.model.SWRLRule;
+import org.xml.sax.InputSource;
+
+import com.sun.org.apache.xerces.internal.parsers.SAXParser;
+
+
+/**
+ * @author Stefan Nesbigall
+ *
+ */
+public class Main {
+
+	/**
+	 * @param args
+	 * @throws URISyntaxException 
+	 * @throws OWLException 
+	 */
+	
+	  public static void main(String[] args) throws URISyntaxException, OWLException {	 
+		
+		  // test_SemanticEnv();
+		  // test_ServiceRegistry();
+		
+		  // test_ServiceProperties();
+		  // test_XMLParse_SparqlQueries();
+		  
+		  // test_OWLUtil();
+		 
+		  // test_Test_Flour();
+		  // test_Test_BookLibrary();
+		  
+		  // test_Test_xmlParse_sparql();
+		  // test_Test_xmlpar();
+		  
+		  test_SemanticReasonerPlugin();
+}	
+	  public static void test_SemanticReasonerPlugin(){
+		  
+			 String	mabox		= "http://127.0.0.1/isreal/messemodul_abox.owl#";
+			 String	mtbox		= "http://127.0.0.1/isreal/messemodul.owl#";
+			 String	mindswap	= "http://www.mindswap.org/2003/owl/mindswap#";
+			 String	foaf		= "http://xmlns.com/foaf/0.1/";
+			
+			 SemanticReasonerPlugin sr= new SemanticReasonerPluginImpl();
+			 //boolean ans=false;
+					 
+		   sr.createReasoner(URI.create(mindswap));
+		   System.out.println("KB Consistency Checking: ");
+		   if(sr.checkKBConsistency()) 
+			   System.out.println( "KB consistency test successful: " +sr.checkKBConsistency());	 
+		   else  
+			   System.out.println("KB consistency test fails!");	
+		   
+		   sr.classify();
+		   sr.realize();
+		   
+		   System.out.println("Subsumption Checking: ");
+		   // add if-then-else things here so that if we make any changes in the real classes, it catches them
+		   if(sr.checkClassSubsumption(URI.create(mindswap + "Programmer" ),URI.create(mindswap + "Staff" )  )) 
+		     System.out.println("Class Subsumption test successful: "+sr.checkClassSubsumption(URI.create(mindswap + "Programmer" ),URI.create(mindswap + "Staff" )  ));			
+		   else
+			   System.out.println("Class Subsumption test fails!");
+		   
+		   System.out.println("Class Consistency Checking: ");		   
+		   if(sr.checkClassConsistency(URI.create( mindswap + "Staff" )))
+			   System.out.println("Class Consistency test successful: "+ sr.checkClassConsistency(URI.create( mindswap + "Staff" )));
+		   else
+				 System.out.println("Class Consistency test fails!");
+		   
+		   System.out.println("Class Equivalence Checking: ");
+		  if(sr.checkClassEquivalence(URI.create( mindswap + "Programmer" ),URI.create( foaf + "Person" ) ))
+			  System.out.println("Class Equivalence checking successful: "+sr.checkClassEquivalence(URI.create( mindswap + "Programmer" ),URI.create( foaf + "Person" ) ));
+		  else
+			  System.out.println("Class Equivalence checking fails!");
+		  
+		   System.out.println("Class Disjunction: ");
+		  if(sr.checkClassDisjunction(URI.create( mindswap + "Programmer" ),URI.create( foaf + "Document" )) )
+			  System.out.println("Clas Disjunction checking successful: "+sr.checkClassDisjunction(URI.create( mindswap + "Programmer" ),URI.create( foaf + "Document" )) );
+		  else
+			  System.out.println("Class Disjuntion checking fails!");
+		  
+		   sr.createReasoner(URI.create(mabox));
+		   System.out.println("Instance Checking: ");
+		   if(sr.instanceChecking(URI.create( mabox + "Carriage01"),URI.create( mtbox + "carriage" ) ))
+		   		System.out.println("Instance Checking successful: "+ sr.instanceChecking(URI.create( mabox + "Carriage01"),URI.create( mtbox + "carriage" ) ));
+		   	else
+		   	  System.out.println("Instance Checking fails!");
+	   }
+	  
+	  public static void test_SemanticEnv(){
+		  File dom_loc = new File(
+			"C:\\xampp//htdocs//isreal//messemodul.owl");
+			
+			SemanticEnv agent = new SemanticEnv("agent1", dom_loc.toURI());
+			SemanticEnv world;
+			
+			File kb_loc = new File(
+			"C:\\xampp//htdocs//isreal//messemodul_abox.owl");
+			
+			world = new SemanticEnv(dom_loc.toURI(), kb_loc.toURI());	
+			
+			//agent.printKnowledge();
+			//agent.printHumanReadableKnowledge();
+			
+			ArrayList<URI> perception = new ArrayList<URI>();
+			//perception.add(URI
+				//	.create("http://127.0.0.1/isreal/messemodul_abox.owl#Slider01"));
+			perception.add(URI
+					.create("http://127.0.0.1/isreal/messemodul_abox.owl#SlidePlateArea"));
+			perception.add(URI
+					.create("http://127.0.0.1/isreal/messemodul_abox.owl#BluePill"));
+			perception.add(URI
+					.create("http://127.0.0.1/isreal/messemodul_abox.owl#RedButton"));
+			
+			
+			for (URI uri : perception){
+				//System.out.println("worl's axioms"+world.getIndividualAxioms(uri));
+				agent.addIndividualAxioms(world.getIndividualAxioms(uri));
+			} 
+			
+			/* 
+			perception = new ArrayList<URI>();
+			perception.add(URI
+					.create("http://127.0.0.1/isreal/messemodul.owl#rule2"));
+			
+			Set<SWRLRule> rules = new HashSet<SWRLRule>();
+			rules.add(world.getRuleAxiom(perception.get(0)));
+			
+			agent.addRules(rules); 		*/
+			
+		
+			agent.printKnowledge();
+			agent.printHumanReadableKnowledge();
+			agent.saveKnowledgeBase(); 
+	  }
+	  
+	  public static void  test_ServiceRegistry(){
+		  
+		  Service s=null;   boolean x;
+			ServiceRegistryImpl asr = new ServiceRegistryImpl();
+	        System.out.println("Service Registry created");
+	        
+	        List<URI> urilist=new ArrayList<URI>();
+	       	        
+	        asr.addService("http://www.mindswap.org/2004/owl-s/1.1/ZipCodeFinder.owl");
+	        asr.addService("http://www.mindswap.org/2004/owl-s/1.1/BookFinder.owl");
+	        System.out.println("Add and Print Services!!");
+	        asr.printServices();
+	   
+	       asr.removeService("http://www.mindswap.org/2004/owl-s/1.1/BookFinder.owl");
+	        System.out.println("Remove and Print Services!!");
+	        asr.printServices();
+	        
+	        urilist=asr.getServices();
+	        for(URI ur: urilist){
+	        	System.out.println("Service URI List: "+ur);
+	        }	        
+	             
+	        s=asr.getService("http://www.mindswap.org/2004/owl-s/1.1/ZipCodeFinder.owl");
+	        System.out.println("Service name: "+s);
+	      
+	        x=asr.isValidService("http://www.mindswap.org/2004/owl-s/1.1/ZipCodeFinder.owl");
+	        System.out.println(x); 
+	       
+	        asr.getServiceFromActionName("ZipCodeFinder");
+	        System.out.println("Get Servicefromname: "+asr.getServiceFromActionName("ZipCodeFinder"));
+	 }
+	 
+	  
+	  public static void test_ServiceProperties() throws OWLOntologyCreationException, URISyntaxException {
+
+			URI aURI = null;
+			ArrayList<String> str=new ArrayList<String>();
+			aURI = new URI("http://127.0.0.1/isreal/flip_slider.owl");
+			ServiceProperties sp=new ServiceProperties();
+			sp.loadServiceProcessOntology(aURI);
+			
+			str= sp.getPropertyfromOntology(URI.create("http://www.daml.org/services/owl-s/1.1/Process.owl#hasPrecondition"));	
+			//str = getPropertyfromOntology(URI.create("http://www.daml.org/services/owl-s/1.1/Process.owl#hasResult"));
+			for(String s:str)
+				System.out.println("Required String : "+s);
+		}
+	  
+	  public static void test_XMLParse_SparqlQueries() {
+			 
+			URI aURI = null;
+			try {
+				aURI = new URI("http://127.0.0.1/isreal/flip_slider.owl");
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			ServiceProperties sp=new ServiceProperties();
+			ArrayList<String> str=new ArrayList<String>();
+
+			sp.loadServiceProcessOntology(aURI);
+			str= sp.getPropertyfromOntology(URI.create("http://www.daml.org/services/owl-s/1.1/Process.owl#hasPrecondition"));	
+			
+			String precondition=new String();
+			precondition= str.get(0);
+			System.out.println("Precondition :"+ str);
+					
+			XMLParse_SparqlQueries t = new XMLParse_SparqlQueries ();
+			SAXParser p = new SAXParser();
+			
+						
+			System.out.println("Start Parsing---------------!!! " );
+			p.setContentHandler(t);
+			try {
+				ByteArrayInputStream objBAInputStream = new java.io.ByteArrayInputStream(precondition.getBytes());
+				InputSource ojbInputSource = new InputSource(objBAInputStream);
+				p.parse(ojbInputSource); 
+				
+				String sparql_query=null;
+				Binding b=new BindingImpl();
+				b.addPair("?http://127.0.0.1/isreal/flip_slider.owl#Slider", "http://127.0.0.1/isreal/flip_slider.owl#Slider01");
+				b.addPair("?http://127.0.0.1/isreal/flip_slider.owl#Area", "http://127.0.0.1/isreal/flip_slider.owl#Area01");
+				b.addPair("?http://127.0.0.1/isreal/flip_slider.owl#BluePill", "http://127.0.0.1/isreal/flip_slider.owl#BluePill01");
+				b.addPair("?http://127.0.0.1/isreal/flip_slider.owl#BluePill", "http://127.0.0.1/isreal/flip_slider.owl#BluePill02");
+				
+				sparql_query=t.createSparqlQuery(b);
+				System.out.println("[ SPARQL QUERY ] ---------------:");
+				System.out.println(sparql_query);
+	    	} 
+			catch (Exception e) { e.printStackTrace(); }  
+	  		}   
+	  
+	  public static void test_OWLUtil() throws URISyntaxException, OWLException {
+	    	URI aURI = null;
+	    	aURI = new URI("http://127.0.0.1/isreal/flip_slider.owl");
+	    	OWLKnowledgeBase aKB = OWLFactory.createKB();
+
+			aKB.setReasoner("RDFS");
+			Service service = null;
+			try {
+				service = aKB.readService(aURI);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			
+			}
+			System.out.println("service name: " + service.getLocalName());
+			Process process = service.getProcess();
+			System.out.println("process name: " + process.getLocalName());
+			OWLUtil ou=new OWLUtil();
+			Set<OWLIndividual> oi=OWLUtil.getPreconditions(process);
+			System.out.println("precondition name: " +oi.size());
+			for(OWLIndividual o:oi)
+			{
+				System.out.println("Prconditions: "+o.toString());
+			}
+	    }
+
+	  
+	  public static void test_Test_xmlParse_sparql() {
+			 
+			/*String fileName=removeLtGts("flip_slider.owl");
+			
+			// create a URI for the service (note that this is a 0.9 version file)   
+		    URI uri = null;
+			// create a KB  
+		    OWLKnowledgeBase kb = OWLFactory.createKB();
+
+		    // create a generic reader and a 1.0 writer
+		    OWLOntology ont = null;
+			try {
+				ont = kb.read(uri);
+				// get the service
+			    Service service = ont.getService();
+			    System.out.println("name: "+service.getName());
+			    
+			} catch (FileNotFoundException e) {
+						e.printStackTrace();	}
+		       
+		    */
+		    	        
+			// get service 
+			// service.getPrecondition.getExpessionBodz -> string
+			
+		/*
+				URI aURI = null;
+				try {
+					aURI = new URI("http://127.0.0.1/isreal/flip_slider.owl");
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				ServiceProperties sp=new ServiceProperties();
+				sp.loadServiceProcessOntology(aURI);
+				//String precondition = sp.getPropertyfromOntology("precondition");
+				//System.out.println("Precondition: " + precondition);
+				
+				
+		    Test_xmlParse_sparql t = new Test_xmlParse_sparql();
+		    SAXParser p = new SAXParser();
+		   
+		   p.setContentHandler(t);
+		    try {
+
+				ByteArrayInputStream objBAInputStream = new java.io.ByteArrayInputStream(precondition.getBytes());
+				InputSource ojbInputSource = new InputSource(objBAInputStream);
+		    	p.parse(ojbInputSource); 
+		    	} 
+		    catch (Exception e) { e.printStackTrace(); } */
+		  } 
+	 
+	  
+	   public static void test_Test_Flour() {
+		    Test_Flour f = new Test_Flour();
+		    SAXParser p = new SAXParser();
+		    p.setContentHandler(f);
+		    try { p.parse("cup.xml"); } 
+		   
+		    catch (Exception e) {e.printStackTrace();}
+		    System.out.println(f.amount);
+		  }  
+	  	  
+	  
+	  public static void test_Test_BookLibrary()
+	  {
+	  	Test_BookLibrary  t=new Test_BookLibrary();
+
+	    SAXParserFactory factory = SAXParserFactory.newInstance();
+	    try {
+
+	          //OutputStreamWriter out = new OutputStreamWriter (System.out, "UTF8");
+	          javax.xml.parsers.SAXParser saxParser = factory.newSAXParser();
+	          saxParser.parse("mine.xml", t );
+	          
+	    } catch (Throwable err) {
+	          err.printStackTrace ();
+	    }    
+	  }
+	  
+	  public static void test_Test_xmlpar() {
+			
+			
+			URI aURI = null;
+			try {
+				aURI = new URI("http://127.0.0.1/isreal/flip_slider.owl");
+				//aURI = new URI("http://www.mindswap.org/2004/owl-s/1.1/BookFinder.owl");
+				//aURI = new URI("http://www.mindswap.org/2004/owl-s/1.1/Dictionary.owl");
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			OWLKnowledgeBase aKB = OWLFactory.createKB();
+		    try {
+		    	 aKB.setReasoner("RDFS");
+				Service service= aKB.readService(aURI);
+				System.out.println("service name: "+service.getLocalName());
+				
+				/*		
+				Profile profile=service.getProfile();	
+				ConditionList conditionList=profile.getConditions();
+				
+				System.out.println(conditionList.size() + " preconditions: ");
+
+				Iterator conditionListIt = conditionList.iterator();
+
+				while(conditionListIt.hasNext()){
+					Condition condition = (Condition)conditionListIt.next();
+					System.out.println(condition.getURI().toString() + " ");
+				} 
+				
+				Process process=service.getProcess();	
+				ConditionList conditionList=process.getConditions();
+				
+				System.out.println(conditionList.size() + " preconditions: ");
+
+				Iterator conditionListIt = conditionList.iterator();
+
+				while(conditionListIt.hasNext()){
+					Condition condition = (Condition)conditionListIt.next();
+					System.out.println(condition.getURI().toString() + " ");
+				}
+				ResultList effectList = process.getResults();
+
+				System.out.println(effectList.size() + " effects: ");
+
+
+				Iterator effectListIt = effectList.iterator();
+
+				while(effectListIt.hasNext()){
+					Result effect = (Result)effectListIt.next();
+					System.out.println(effect.getURI().toString() + " "+effect.getEffect().getBody().atomAt(0).toString());
+				}*/
+				
+				Process process=service.getProcess(); 
+				System.out.println("process name: "+process.getLocalName());
+			
+				
+				ConditionList cond= process.getConditions();
+				System.out.println("size: "+cond.size());
+				//System.out.println("conditions: "+cond); 
+				OWLIndividual olr=(OWLIndividual) cond.conditionAt(0); 			
+			
+				//System.out.println("process rdf: "+process.toRDF()); 				
+				
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}    
+	}
+	  
+
+}
+
+

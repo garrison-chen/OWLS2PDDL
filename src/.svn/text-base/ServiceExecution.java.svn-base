@@ -1,0 +1,19 @@
+package de.dfki.isreal.semantics;
+
+import org.mindswap.owls.service.Service;
+
+public interface ServiceExecution {
+	
+	//public void chooseService(Service service, Binding binding);
+	
+	public void executeSemanticService();
+	
+	public boolean checkPrecondition();
+	// 
+	
+	public void updateEffect();
+	
+	public void invokeService();
+	
+	
+}

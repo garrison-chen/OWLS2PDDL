@@ -1,0 +1,228 @@
+package de.dfki.isreal.semantics;
+
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import org.mindswap.owls.service.Service;
+import java.net.*;
+import org.mindswap.owls.*;
+import org.mindswap.owls.process.*;
+//import org.mindswap.owls.io.*;
+
+
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.mindswap.owl.OWLFactory;
+import org.mindswap.owl.OWLKnowledgeBase;
+import org.mindswap.owl.OWLOntology;
+import org.mindswap.owls.process.Condition;
+import org.mindswap.owls.process.ConditionList;
+import org.mindswap.owls.process.Process;
+import org.mindswap.owls.profile.Profile;
+import org.mindswap.owls.service.Service;
+import org.xml.sax.*;
+import org.xml.sax.helpers.*;
+//import org.apache.xerces.parsers.SAXParser;
+import com.sun.org.apache.xerces.internal.parsers.SAXParser;
+
+
+public class Test_xmlParse_sparql extends DefaultHandler {
+	
+	int flag=0;
+	int pred_flag=0;
+	String var1=null;
+	String var2=null;
+	String property=null;
+
+   public void startDocument() {
+    System.out.println("start document");
+  }
+
+  public void endDocument() {
+    System.out.println("end document");
+    
+  }
+
+  public void startElement(String uri, String localName, String qName, Attributes attributes) {
+		 
+	  if(localName.equals("pred")) {		 
+		 System.out.println("-----------------------------");
+		 pred_flag=1;
+		 property=attributes.getValue("name");
+	  }
+	 
+	  if(localName.equals("param")) {
+				  flag=1;
+	  }       
+  }
+
+  public void endElement(String uri, String localName, String qName) {
+	  
+	  if(localName.equals("param")) 
+	  {
+		  flag=0;
+	  }
+	  if(localName.equals("pred"))
+	  {
+		  pred_flag=0;
+		  if(var1!=null && var2!=null)
+		  {	
+
+			  System.out.println("Var1: "+ var1);
+			  System.out.println("Var2: "+ var2);	
+			  System.out.println("Property: " + property);
+			  var1=null;
+			  var2=null;
+			  property=null;
+		  }
+		  else if(var1!=null && var2==null)
+			  
+		  {	
+			  System.out.println("Var1: "+ var1);			  
+			  System.out.println("Assert: " + property);
+			  var1=null;
+			  property=null;
+		  } 
+		
+		
+	  }
+	  
+   //System.out.println("end element: " + qName);
+  }
+
+  public void ignorableWhitespace(char[] ch, int start, int length) {
+   
+   // System.out.println("whitespace, length " + length);
+  }
+
+  public void processingInstruction(String target, String data) {
+   
+  //  System.out.println("processing instruction: " + data);
+  }
+
+  public void characters(char[] ch, int start, int length){
+	  
+	  if (flag==1){
+		
+		 if(var1==null && var2==null){
+			 
+		 var1=String.valueOf(ch, start, length);
+		
+		 }
+		 else if(var1!=null && var2==null) 			 
+		 {
+		  var2=String.valueOf(ch, start, length);
+		  
+		 }
+	  }
+  }
+
+  /* 
+  // takes a file name,converts it into a string, removes &lt &gt, writes this string into a new file whose file
+ //name is returned 
+ */
+ public static String removeLtGts(String fileName) {
+	 
+	 String str=new String();
+	 
+	  try{ 
+         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance(); 
+         InputStream inputStream = new FileInputStream(new File(fileName)); 
+         org.w3c.dom.Document doc = documentBuilderFactory.newDocumentBuilder().parse(inputStream); 
+         StringWriter stw = new StringWriter(); 
+         Transformer serializer = TransformerFactory.newInstance().newTransformer(); 
+         serializer.transform(new DOMSource(doc), new StreamResult(stw)); 
+         str=stw.toString();       
+       
+         str=str.replaceAll("&lt;", "<");
+         str=str.replaceAll("&gt;", ">");
+        // System.out.println("YE lo String: "+str);
+       } 
+       catch (Exception e) { 
+         e.printStackTrace(); 
+       } 	 
+	  try {
+	        BufferedWriter out = new BufferedWriter(new FileWriter("new.owl"));
+	        out.write(str);
+	        out.close();
+	    } catch (IOException e) {
+	    } 
+	    return "new.owl";
+ }
+     
+  public static void main(String[] args) {
+	 
+	/*String fileName=removeLtGts("flip_slider.owl");
+	
+	// create a URI for the service (note that this is a 0.9 version file)   
+    URI uri = null;
+	try {
+	//	uri = new URI("http://www.mindswap.org/2004/owl-s/1.1/ZipCodeFinder.owl");		
+	} catch (URISyntaxException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+    // create a KB  
+    OWLKnowledgeBase kb = OWLFactory.createKB();
+
+    // create a generic reader and a 1.0 writer
+    OWLOntology ont = null;
+	try {
+		ont = kb.read(uri);
+		// get the service
+	    Service service = ont.getService();
+	    System.out.println("name: "+service.getName());
+	    
+	} catch (FileNotFoundException e) {
+				e.printStackTrace();	}
+       
+    */ 
+    	        
+	// get service 
+	// service.getPrecondition.getExpessionBodz -> string
+	
+/*
+		URI aURI = null;
+		try {
+			aURI = new URI("http://127.0.0.1/isreal/flip_slider.owl");
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ServiceProperties sp=new ServiceProperties();
+		sp.loadServiceProcessOntology(aURI);
+		//String precondition = sp.getPropertyfromOntology("precondition");
+		//System.out.println("Precondition: " + precondition);
+		
+		
+    Test_xmlParse_sparql t = new Test_xmlParse_sparql();
+    SAXParser p = new SAXParser();
+   
+   p.setContentHandler(t);
+    try {
+
+		ByteArrayInputStream objBAInputStream = new java.io.ByteArrayInputStream(precondition.getBytes());
+		InputSource ojbInputSource = new InputSource(objBAInputStream);
+    	p.parse(ojbInputSource); 
+    	} 
+    catch (Exception e) { e.printStackTrace(); } */
+  } 
+  
+}

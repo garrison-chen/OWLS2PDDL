@@ -1,0 +1,248 @@
+package de.dfki.isreal.semantics;
+
+public class OMSMaintenanceTab{
+	
+}
+/*package de.dfki.isreal.user.gui;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+import org.openrdf.model.Value;
+
+import de.dfki.isreal.semantic.components.Axiom;
+import de.dfki.isreal.semantic.components.impl.AxiomImpl;
+import de.dfki.isreal.user.client.GlobalSESClient;
+import eu.larkc.core.data.CloseableIterator;
+import eu.larkc.core.data.VariableBinding;
+import eu.larkc.core.data.VariableBinding.Binding;
+import eu.larkc.core.query.SPARQLQuery;
+import eu.larkc.core.query.SPARQLQueryImpl;
+
+public class OMSMaintenanceTab extends JPanel {
+	
+	private static GlobalSESClient globalSESClient;
+	
+	private static JTabbedPane omsStoreTP;
+	private static JPanel tripleStorePane;
+	private static JTable tsTable;
+	private static JButton refreshButton;
+	private JButton updateButton;
+	private JButton removeButton;
+	private JButton insertButton;
+
+	private JTextField objTF;
+	private JTextField predTF;
+	private JTextField subjTF;
+
+	public OMSMaintenanceTab(GlobalSESClient cl){
+		globalSESClient = cl;
+		this.setLayout(new GridBagLayout());
+		GridBagConstraints c1 = new GridBagConstraints();
+		c1.fill = GridBagConstraints.HORIZONTAL;
+		c1.insets = new Insets(5,5,5,5);
+		c1.gridx = 0;
+		c1.gridy = 0;
+		JLabel subject = new JLabel("Subject");
+		this.add(subject, c1);
+		c1.gridx = 1;
+		c1.gridwidth = 2;
+		this.add(getSubjTextField(), c1);
+		GridBagConstraints c2 = new GridBagConstraints();
+		c2.fill = GridBagConstraints.HORIZONTAL;
+		c2.insets = new Insets(5,5,5,5);
+		c2.gridx = 0;
+		c2.gridy = 1;
+		JLabel predicate = new JLabel("Predicate");
+		this.add(predicate, c2);
+		c2.gridx = 1;
+		c2.gridwidth = 2;
+		this.add(getPredTextField(), c2);
+		GridBagConstraints c3 = new GridBagConstraints();
+		c3.fill = GridBagConstraints.HORIZONTAL;
+		c3.insets = new Insets(5,5,5,5);
+		c3.gridx = 0;
+		c3.gridy = 2;
+		JLabel object = new JLabel("Object");
+		this.add(object, c3);
+		c3.gridx = 1;
+		c3.gridwidth = 2;
+		this.add(getObjTextField(), c3);
+		
+		GridBagConstraints c5 = new GridBagConstraints();
+		c5.fill = GridBagConstraints.HORIZONTAL;
+		c5.insets = new Insets(5,5,5,5);
+		c5.gridx = 0;
+		c5.gridy = 3;
+		c5.gridwidth = 3;
+		JPanel buttonPane = new JPanel();
+		
+		GridBagConstraints c6 = new GridBagConstraints();
+		c6.fill = GridBagConstraints.HORIZONTAL;
+		c6.insets = new Insets(5,5,5,5);
+		buttonPane.add(getInsertButton(), c6);
+		c6.gridx = 1;
+		buttonPane.add(getRemoveButton(), c6);
+		c6.gridx = 2;
+		buttonPane.add(getUpdateButton(), c6);
+		
+		this.add(buttonPane, c5);
+		
+		
+		GridBagConstraints c4 = new GridBagConstraints();
+		c4.fill = GridBagConstraints.BOTH;
+		c4.insets = new Insets(5,5,5,5);
+		c4.gridx = 0;
+		c4.weightx = 1;
+		c4.gridy = 4;
+		c4.weighty = 1;
+		c4.gridwidth = 3;
+		c4.anchor = GridBagConstraints.WEST;
+		
+		this.add(getOmsStoreTP(), c4);
+	}
+	
+	private JTextField getObjTextField() {
+		if (objTF == null){
+			objTF = new JTextField();
+		}
+		return objTF;
+	}
+
+	private JTextField getPredTextField() {
+		if (predTF == null){
+			predTF = new JTextField();
+		}
+		return predTF;
+	}
+	
+	private JTextField getSubjTextField() {
+		if (subjTF == null){
+			subjTF = new JTextField();
+		}
+		return subjTF;
+	}
+
+	private JButton getUpdateButton() {
+		if (updateButton == null){
+			updateButton = new JButton();
+			updateButton.setText("Update");
+			updateButton.addActionListener(new java.awt.event.ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {
+					Axiom a = new AxiomImpl(subjTF.getText(), predTF.getText(), objTF.getText());
+					globalSESClient.update(a);
+				}
+			});
+		}
+		return updateButton;
+	}
+
+	private JButton getRemoveButton() {
+		if (removeButton == null){
+			removeButton = new JButton();
+			removeButton.setText("Remove");
+			removeButton.addActionListener(new java.awt.event.ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {
+					Axiom a = new AxiomImpl(subjTF.getText(), predTF.getText(), objTF.getText());
+					globalSESClient.remove(a);
+				}
+			});
+		}
+		return removeButton;
+	}
+
+	private JButton getInsertButton() {
+		if (insertButton == null){
+			insertButton = new JButton();
+			insertButton.setText("Insert");
+			insertButton.addActionListener(new java.awt.event.ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {
+					Axiom a = new AxiomImpl(subjTF.getText(), predTF.getText(), objTF.getText());
+					globalSESClient.insert(a);
+				}
+			});
+		}
+		return insertButton;
+	}
+
+	private static JTabbedPane getOmsStoreTP() {
+		if (omsStoreTP == null){
+			omsStoreTP = new JTabbedPane();
+			omsStoreTP.addTab("Triple Store (OWLIM)", null, getTripleStorePane(), null);
+		}
+		return omsStoreTP;
+	}
+
+	private static JPanel getTripleStorePane() {
+		if (tripleStorePane == null){
+			tripleStorePane = new JPanel();
+			tripleStorePane.setLayout(new BorderLayout());
+			tripleStorePane.add(new JScrollPane(getTSTable()), BorderLayout.CENTER);
+			tripleStorePane.add(getRefreshButton(), BorderLayout.SOUTH);
+		}
+		return tripleStorePane;
+	}
+
+	private static JButton getRefreshButton() {
+		if (refreshButton == null){
+			refreshButton = new JButton();
+			refreshButton.setText("Refresh");
+			refreshButton.addActionListener(new java.awt.event.ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {
+					tsTable.setModel(getTableModel());
+				}
+			});
+		}
+		return refreshButton;
+	}
+
+	private static JTable getTSTable() {
+		if (tsTable == null){
+			tsTable = new JTable();
+			tsTable.setModel(getTableModel());
+		}
+		return tsTable;
+	}
+
+	private static TableModel getTableModel() {
+		String[] columnNames = {"Subject", "Predicate", "Object"}; 
+		String[][] entries = new String[0][3];
+		DefaultTableModel model = new DefaultTableModel(entries, columnNames);
+		
+		String q = "SELECT ?subj ?pred ?obj WHERE { " +
+				"?subj ?pred ?obj" +
+				" }";
+		
+		SPARQLQuery theQuery = new SPARQLQueryImpl(q);
+		VariableBinding bnd = globalSESClient.sparqlSelect(theQuery, null);
+		CloseableIterator<Binding> it = bnd.iterator();
+		while(it.hasNext()){
+			Binding b = it.next();
+			List<Value> vals = b.getValues();
+			System.out.println(b.toString() + "->" + vals.size() + " values.");
+			// TODO fill table model
+		}
+		
+		String[] test = {"House", "subClassOf", "Building"};
+		model.addRow(test);
+		
+		return model;
+	}
+
+}
+*/

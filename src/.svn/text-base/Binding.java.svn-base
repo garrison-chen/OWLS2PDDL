@@ -1,0 +1,21 @@
+package de.dfki.isreal.semantics;
+
+import java.util.ArrayList;
+
+public interface Binding {
+	
+	/*
+	 * returns the individual for the given variable
+	 */
+	public String getIndividual(String variable);
+	
+	/*
+	 * returns the variable for a given individual
+	 */
+	public String getVariable(String ind);
+	
+	public void addPair(String var, String ind);
+		
+	//
+	public ArrayList<ArrayList> getPairs();
+}
